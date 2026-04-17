@@ -19,7 +19,7 @@ cd practical-python-examples
 
 ## Python Installation
 
-Go to <b>https://www.python.org/downloads/</b> and selct your preferred version.
+Go to <b>https://www.python.org/downloads/</b> and select your preferred version.
 
 I will use Python 3.12 as the starting point.
 
