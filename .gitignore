@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# bash scripts
+yolla.sh
+
 # Distribution / packaging
 .Python
 build/
