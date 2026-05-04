@@ -53,7 +53,7 @@ def main():
         template_folder="scraper_templates"
     )
     
-    app.secret_key = "mojo-scraper-secret-key"
+    app.secret_key = "python-scraper-secret-key"
     
     setup_routes(app)
     
