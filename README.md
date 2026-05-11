@@ -46,7 +46,7 @@ Author: Your name
 
 Date: Creation date
 
-Python version no: x.y.z
+Python {version no: x.y.z } Operating System
 
 """
 
