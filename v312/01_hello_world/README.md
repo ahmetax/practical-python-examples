@@ -1,44 +1,52 @@
-# Hello World Project (Claude Code Edition)
+# Hello World Python Project
 
-A minimal Python project demonstrating a basic "Hello World" implementation. This README is designed as a specification for Claude Code to generate this project from scratch.
+A simple, beginner-friendly Python project that prints "Hello World!" to the console. This project is designed to be the absolute first step for anyone starting with Python.
 
-## Project Overview
-The goal of this project is to create a single Python script that outputs a greeting to the standard output.
+## 🚀 Quick Start (Create from Scratch)
 
-## Specifications for Claude Code
+If you want to create this project on your own machine, follow these three simple steps:
 
-If you are asking Claude Code to recreate this project, you can use the following prompt:
-
-> "Create a directory named `01_hello_world`. Inside it, create a Python file `hello_world.py` that prints 'Hello World!'. Include a header docstring with Author: Ahmet Aksoy, Date: 2026-04-16, and Environment: Python 3.12 - Ubuntu 24.04."
-
-## Project Structure
-```
-01_hello_world/
-└── hello_world.py    # Main execution script
+### 1. Setup Folder
+Create a folder to keep your project organized:
+```bash
+mkdir 01_hello_world
+cd 01_hello_world
 ```
 
-## Implementation Details
+### 2. Create the Code
+Create a file named `hello_world.py` and paste the following code into it:
+```python
+"""
+Author: Ahmet Aksoy
+Date: 2026-04-16
+Python 3.12 - Ubuntu 24.04
+"""
 
-### `hello_world.py`
-- **Purpose**: Print "Hello World!" to the console.
-- **Requirements**: 
-    - Python 3.12
-    - Standard library only (no external dependencies).
-    - Must include metadata in the top-level docstring.
+print("Hello World!")
+```
 
-## Setup and Execution Instructions
-
-### 1. Environment Setup
-Ensure you have Python 3.12 installed.
-
-### 2. Running the Project
-From the root of the project directory, execute:
+### 3. Run and Verify
+Execute the script using Python:
 ```bash
 python3 hello_world.py
 ```
+**Expected Output:**
+`Hello World!`
 
-## Expected Result
-The terminal should display:
+---
+
+## 📂 Project Structure
 ```text
-Hello World!
+01_hello_world/
+└── hello_world.py    # The script that performs the action
 ```
+
+## 🛠️ Requirements
+- **Python**: Version 3.12 is recommended.
+- **OS**: Works on Windows, macOS, and Linux (developed on Ubuntu 24.04).
+
+## 📖 What this project teaches
+- How to create and organize a Python project directory.
+- How to write a basic Python script with a docstring.
+- How to use the `print()` function.
+- How to execute Python files from the command line.
