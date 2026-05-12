@@ -51,7 +51,7 @@ Create a file named `.env` in the root directory of the project and add your API
 ```text
 OPENWEATHERMAP_API_KEY=your_api_key_here
 ```
-
+You can copy the .env.example file .env and fill it with your actual API_KEY.
 ---
 
 ## 🏃 Running the App
@@ -89,3 +89,4 @@ This file contains the **Business Logic**:
 - **City Not Found**: Ensure the city name is spelled correctly.
 - **Invalid API Key**: Check your `.env` file and ensure the key is active (new keys can take a few hours to activate).
 - **Port Conflict**: If port 8117 is taken, you can change the port in `weather_app.py`.
+
