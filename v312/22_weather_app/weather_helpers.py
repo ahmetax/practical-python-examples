@@ -29,7 +29,7 @@ _load_env()
 API_KEY  = os.environ.get("OPENWEATHERMAP_API_KEY", "")
 print("OPENWEATHERMAP_API_KEY", API_KEY)
 API_BASE    = "https://api.openweathermap.org/data/2.5"
-MAX_RECENT  = 6
+MAX_RECENT  = 5
 
 
 # ------------------------------------------------------------------ #
