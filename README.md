@@ -50,4 +50,7 @@ Python {version no: x.y.z } Operating System
 
 """
 
+## Vibe Coding
+
+You can use Readme.md files to create the projects from scratch.
 
