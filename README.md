@@ -54,3 +54,8 @@ Python {version no: x.y.z } Operating System
 
 You can use <b>README.md</b> files to create the projects from scratch by any Coding Agent.
 
+## Detailed Code Explanations (in Turkish)
+
+In https://gurmezin.com site you can find detailed explanations for each individual example.
+
+
