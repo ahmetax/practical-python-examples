@@ -114,3 +114,5 @@ Aşağıdaki yardımcı fonksiyonları ve route handler'ları uygulayın:
 - **Flask Oturumları ve Flashing**: Flash mesajları aracılığıyla anında kullanıcı geri bildirimi sağlamak.
 - **Durum Yönetimi**: Bir görevin "Yapıldı/Yapılmadı" durumunu yönetmek.
 - **Öncelik Tabanlı Sıralama**: SQL'de özel sıralama düzenleri uygulamak.
+
+---
