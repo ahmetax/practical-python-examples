@@ -44,5 +44,5 @@ Bash
 python3 main.py
 Examine the output. Verify that the network handshake resolves with a 200 OK status and successfully captures page markers or target layout variables from the destination endpoint cleanly on the fly.
 
-
 ---
+
