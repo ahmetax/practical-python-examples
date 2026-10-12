@@ -215,3 +215,6 @@ curl -X DELETE http://localhost:8117/api/books/1
 - `/api/books` uç noktasına **sayfalama (pagination)** ekleyin.
 - Bu API'yi tüketmek için HTML/JS kullanarak bir **ön yüz (frontend)** oluşturun.
 - SQL `LIKE` sorguları ile **arama fonksiyonu** ekleyin.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ile Flask’a Giriş: Basit Sunucudan SQLite REST API’ye Yolculuk](https://gurmezin.com/2026/06/21/python-ile-flaska-giris-basit-sunucudan-sqlite-rest-apiye-yolculuk/)

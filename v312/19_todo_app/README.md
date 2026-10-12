@@ -117,3 +117,6 @@ Implement the following helpers and route handlers:
 - **Flask Sessions & Flashing**: Providing immediate user feedback through flash messages.
 - **State Management**: Managing the "Done/Undone" state of a task.
 - **Priority-Based Sorting**: Implementing custom sort orders in SQL.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ve Flask ile Modern Bir To-Do Uygulaması Geliştirmek](https://gurmezin.com/2026/07/12/python-ve-flask-ile-modern-bir-to-do-uygulamasi-gelistirmek/)

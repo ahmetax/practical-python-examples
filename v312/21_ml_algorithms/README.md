@@ -426,6 +426,9 @@ done
 
 ---
 
+## Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Saf Python ile 17 Makine Öğrenimi Algoritması: Matematiği Kodla Keşfedin](https://gurmezin.com/2026/07/22/saf-python-ile-17-makine-ogrenimi-algoritmasi-matematigi-kodla-kesfedin/)
+
 ## License
 
 MIT — free to use, study, and modify.

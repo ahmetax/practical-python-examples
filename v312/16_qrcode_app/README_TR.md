@@ -125,3 +125,6 @@ Verileri standartlara göre formatlayan fonksiyonlar oluşturun:
 - **Gerçek Zamanlı Etkileşim**: JavaScript web kamerası kare yakalama ile Python arka uç çözümlemesinin birleştirilmesi.
 - **Web Çatıları**: Dinamik yönlendirme ve dosya sunumu ile çok fonksiyonlu bir araç oluşturmak için Flask kullanımı.
  la
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ile Kapsamlı QR Kod Oluşturucu ve Okuyucu Geliştirmek](https://gurmezin.com/2026/07/03/python-ile-kapsamli-qr-kod-olusturucu-ve-okuyucu-gelistirmek/)

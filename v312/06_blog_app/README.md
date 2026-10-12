@@ -94,3 +94,6 @@ Build your frontend using **Jinja2** templates:
 ## 📈 Complexity & Security Notes
 - **Time Complexity**: Most database operations are $O(1)$ or $O(N)$ where $N$ is the number of posts, which is efficient for small-to-medium blogs.
 - **Security**: This app uses **Bcrypt** for passwords, preventing plain-text leaks, and **Server-side Sessions** to prevent unauthorized access to the dashboard.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Kendi Blog Sisteminizi Kurun: Flask ve SQLite ile Mini CMS Geliştirme](https://gurmezin.com/2026/06/03/kendi-blog-sisteminizi-kurun-flask-ve-sqlite-ile-mini-cms-gelistirme/)

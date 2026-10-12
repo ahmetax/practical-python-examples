@@ -280,3 +280,6 @@ Betiği çalıştırdığınızda şuna benzer bir çıktı göreceksiniz:
 - `pandas` kütüphanesi ile DataFrame operasyonları için lambda'ları kullanın.
 - Projeleriniz için lambda tabanlı bir yardımcı modül oluşturun.
 - `map()` ve `filter()` alternatifleri olarak liste üreteçlerini (list comprehensions) keşfedin.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python’da Lambda Fonksiyonları: Tek Satırlık Güç ve Pratik Kullanımlar](https://gurmezin.com/2026/06/24/pythonda-lambda-fonksiyonlari-tek-satirlik-guc-ve-pratik-kullanimlar/)

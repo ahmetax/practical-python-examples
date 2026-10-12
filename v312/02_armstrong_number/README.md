@@ -72,3 +72,6 @@ This function takes an integer `n` and returns a boolean (`True` or `False`).
 ## 🚀 Complexity Analysis
 - **Time Complexity**: $O(R \cdot D)$, where $R$ is the range of numbers checked and $D$ is the number of digits in the largest number.
 - **Space Complexity**: $O(D)$ to store the string representation of the number.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ile Armstrong Sayıları: Nedir ve Nasıl Bulunur?](https://gurmezin.com/2026/05/26/python-ile-armstrong-sayilari-nedir-ve-nasil-bulunur/)

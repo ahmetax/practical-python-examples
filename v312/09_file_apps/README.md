@@ -118,3 +118,6 @@ Total number of words:  1679
 - **Recursion**: The function calls itself to handle nested directories.
 - **File I/O**: Reading text files and handling paths safely using `pathlib`.
 - **String Manipulation**: Using `.split()` to tokenize text into words.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ile Özyinilemeli Dosya ve Kelime Sayacı Geliştirmek](https://gurmezin.com/2026/06/12/python-ile-ozyinilemeli-dosya-ve-kelime-sayaci-gelistirmek/)

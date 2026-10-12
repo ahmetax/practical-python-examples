@@ -161,3 +161,6 @@ pip install flask werkzeug
 - **Static File Serving**: Using `send_from_directory` for both downloads and inline display.
 - **User Feedback**: Using Flask's `flash` system to show success and error messages.
 - **Filtering & Aggregation**: Processing file lists to generate statistics and category-based filters.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ve Flask ile Web Tabanlı Gelişmiş Dosya Yöneticisi Yapımı](https://gurmezin.com/2026/06/15/python-ve-flask-ile-web-tabanli-gelismis-dosya-yoneticisi-yapimi/)

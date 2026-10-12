@@ -213,3 +213,6 @@ curl -X DELETE http://localhost:8117/api/books/1
 - Add **pagination** to the `/api/books` endpoint.
 - Create a **frontend** using HTML/JS to consume this API.
 - Add **search functionality** with SQL `LIKE` queries.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ile Flask’a Giriş: Basit Sunucudan SQLite REST API’ye Yolculuk](https://gurmezin.com/2026/06/21/python-ile-flaska-giris-basit-sunucudan-sqlite-rest-apiye-yolculuk/)

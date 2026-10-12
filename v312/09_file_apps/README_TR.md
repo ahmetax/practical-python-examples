@@ -118,3 +118,6 @@ Toplam kelime sayısı:  1679
 - **Özyinleme (Recursion)**: Fonksiyonun, iç içe geçmiş dizinleri yönetmek için kendisini çağırması.
 - **Dosya G/Ç (I/O)**: Metin dosyalarını okuma ve `pathlib` kullanarak yolları güvenli bir şekilde yönetme.
 - **Dize Manipülasyonu**: Metni kelimelere ayırmak için `.split()` kullanımı.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ile Özyinilemeli Dosya ve Kelime Sayacı Geliştirmek](https://gurmezin.com/2026/06/12/python-ile-ozyinilemeli-dosya-ve-kelime-sayaci-gelistirmek/)

@@ -55,3 +55,6 @@ Proje, `factorial(i)` adında özyinilemeli bir fonksiyon kullanır.
 
 ## 📦 Bağımlılıklar
 - Yok (bu proje sadece Python Standart Kütüphanesini kullanır).
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ile Faktöriyel Hesaplama: Rekürsif Yaklaşım ve Mantığı](https://gurmezin.com/2026/05/27/python-ile-faktoriyel-hesaplama-rekursif-yaklasim-ve-mantigi/)

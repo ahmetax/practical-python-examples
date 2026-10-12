@@ -73,3 +73,6 @@ Bu proje, Fibonacci dizisinin **özyinilemeli** bir uygulamasını kullanır:
 Script, hesaplamalar arasında geçen yüksek çözünürlüklü süreyi ölçmek için `time.perf_counter()` kullanır.
 
 **Gözlem**: Bu uygulama, memoizasyon (hafızaya alma) olmadan basit özyinleme kullandığı için zaman karmaşıklığı üsteldir $O(2^n)$. Bu durum, $n$ arttıkça performansın önemli ölçüde düşmesine neden olur ve bu durum script'in çıktısında açıkça görülür.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Sıfırdan Fibonacci: Python’da Özyineleme ve Performans Analizi](https://gurmezin.com/2026/05/29/sifirdan-fibonacci-pythonda-ozyineleme-ve-performans-analizi/)

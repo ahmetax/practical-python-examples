@@ -280,3 +280,6 @@ When you run the script, you will see output similar to:
 - Use lambdas with `pandas` for DataFrame operations.
 - Create a lambda-based utility module for your projects.
 - Explore list comprehensions as an alternative to `map()` and `filter()`.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python’da Lambda Fonksiyonları: Tek Satırlık Güç ve Pratik Kullanımlar](https://gurmezin.com/2026/06/24/pythonda-lambda-fonksiyonlari-tek-satirlik-guc-ve-pratik-kullanimlar/)

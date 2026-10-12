@@ -94,3 +94,6 @@ Ana uygulamayı temiz tutmak için bir yardımcı modül oluşturun. Şunları u
 ## 📈 Karmaşıklık ve Güvenlik Notları
 - **Zaman Karmaşıklığı**: Çoğu veritabanı işlemi $O(1)$ veya $N$ yazı sayısı olmak üzere $O(N)$'dir; bu da küçük ve orta ölçekli bloglar için verimlidir.
 - **Güvenlik**: Bu uygulama, düz metin sızıntılarını önlemek için şifrelerde **Bcrypt** ve panoya yetkisiz erişimi önlemek için **Sunucu Taraflı Oturumlar (Server-side Sessions)** kullanır.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Kendi Blog Sisteminizi Kurun: Flask ve SQLite ile Mini CMS Geliştirme](https://gurmezin.com/2026/06/03/kendi-blog-sisteminizi-kurun-flask-ve-sqlite-ile-mini-cms-gelistirme/)

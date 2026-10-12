@@ -224,3 +224,6 @@ pip install requests
 - **Testing Services**: This project uses free public testing services (httpbin.org, jsonplaceholder.typicode.com). Do not use real credentials with these — they are for testing only.
 - **Environment Variables**: In production code, never hardcode API keys or tokens. Use `os.environ.get("API_KEY")` instead.
 - **Error Handling**: Always wrap network calls in try/except blocks to handle timeouts, connection errors, and invalid responses gracefully.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python requests Kütüphanesi ile HTTP Dünyasına Giriş: API’ler, Oturumlar ve Dayanıklı İstekler](https://gurmezin.com/2026/06/18/python-requests-kutuphanesi-ile-http-dunyasina-giris-apiler-oturumlar-ve-dayanikli-istekler/)

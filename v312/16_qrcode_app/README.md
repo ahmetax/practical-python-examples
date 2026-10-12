@@ -124,3 +124,6 @@ Implement a robust decoding pipeline to handle various image qualities:
 - **Binary Data Handling**: Working with `io.BytesIO` and `base64` to serve images without saving them to disk.
 - **Real-time Interaction**: Combining Python backend decoding with JavaScript webcam frame capture.
 - **Web Frameworks**: Using Flask to build a multi-functional tool with dynamic routing and file serving.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ile Kapsamlı QR Kod Oluşturucu ve Okuyucu Geliştirmek](https://gurmezin.com/2026/07/03/python-ile-kapsamli-qr-kod-olusturucu-ve-okuyucu-gelistirmek/)

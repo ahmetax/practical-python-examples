@@ -127,3 +127,6 @@ Define the endpoints to connect the frontend to the engine:
 - **Subprocess Management**: Using Python's `subprocess` module to execute and communicate with external scripts.
 - **Real-time Web Animation**: Using JavaScript to playback a recorded sequence of algorithmic steps.
 - **Complexity Analysis**: Measuring execution time in nanoseconds for algorithm comparison.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ile Sudoku Uygulaması Geliştirme: Backtracking Algoritması ve Web Entegrasyonu](https://gurmezin.com/2026/07/09/python-ile-sudoku-uygulamasi-gelistirme-backtracking-algoritmasi-ve-web-entegrasyonu/)

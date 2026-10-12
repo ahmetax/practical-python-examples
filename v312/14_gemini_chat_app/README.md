@@ -111,3 +111,6 @@ Implement a recursive-like loop to handle tool execution:
 - **Context Management**: Maintaining conversation state in multi-turn interactions.
 - **Hybrid API Architecture**: Combining multiple APIs (Gemini, Tavily, CoinGecko) into a single coherent application.
 - **Modern Frontend**: Creating a responsive AI chat UI with asynchronous data handling.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Google Gemini ve Flask: Fonksiyon Çağırabilen Yapay Zeka Sohbet Uygulaması](https://gurmezin.com/2026/06/27/google-gemini-ve-flask-fonksiyon-cagirabilen-yapay-zeka-sohbet-uygulamasi/)

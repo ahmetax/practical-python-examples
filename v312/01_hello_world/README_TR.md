@@ -35,3 +35,6 @@ Proje, `hello_world.py` adında tek bir dosya içerir. Bu script, Python'da kons
 
 ## 📦 Bağımlılıklar
 - Yok (bu proje sadece Python Standart Kütüphanesini kullanır).
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python Öğreniyorum: İlk Programınızı Yazın ve Çalıştırın (Adım Adım Rehber)](https://gurmezin.com/2026/05/24/python-ogreniyorum-ilk-programinizi-yazin-ve-calistirin-adim-adim-rehber/)

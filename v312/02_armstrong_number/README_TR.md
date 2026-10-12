@@ -59,3 +59,6 @@ Proje, aşağıdaki mantığı uygulayan `check_armstrong_number.py` adlı bir s
 
 ## 📦 Bağımlılıklar
 - Yok (bu proje sadece Python Standart Kütüphanesini kullanır).
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ile Armstrong Sayıları: Nedir ve Nasıl Bulunur?](https://gurmezin.com/2026/05/26/python-ile-armstrong-sayilari-nedir-ve-nasil-bulunur/)

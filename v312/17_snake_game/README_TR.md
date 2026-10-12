@@ -114,3 +114,6 @@ Yiyeceğe en kısa yolu bulmak için `bfs_next_dir(state)` uygulayın:
 - **Event-Driven Programming**: Bir GUI'de asenkron klavye girdilerini işleme.
 - **Time Management**: Uyku aralıkları (sleep intervals) aracılığıyla oyun hızını kontrol etme.
 - **State Machines**: "Alive", "Game Over" ve "AI Mode" arasındaki geçişleri yönetme.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ile Klasik Yılan Oyunu Geliştirme: tkinter ve BFS Algoritması](https://gurmezin.com/2026/07/06/python-ile-klasik-yilan-oyunu-gelistirme-tkinter-ve-bfs-algoritmasi/)

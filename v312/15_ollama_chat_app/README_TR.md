@@ -111,3 +111,6 @@ Model güdümlü araç kullanımını yönetmek için bir döngü uygulayın:
 - **Durum Yönetimi**: Yerel modeller için çok turlu konuşma geçmişini korumak.
 - **Ön Yüz/Arka Yüz Entegrasyonu**: JavaScript tabanlı bir kullanıcı arayüzünü, Python tabanlı bir YZ orkestratörüne bağlamak.
 - **Performans Takibi**: Yanıt sürelerini ve token verimliliğini ölçmek.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Yerel Yapay Zeka Asistanınızı Oluşturun: Python, Flask ve Ollama ile Akıllı Sohbet Uygulaması](https://gurmezin.com/2026/06/30/yerel-yapay-zeka-asistaninizi-olusturun-python-flask-ve-ollama-ile-akilli-sohbet-uygulamasi/)

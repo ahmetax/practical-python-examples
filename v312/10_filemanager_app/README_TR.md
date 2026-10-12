@@ -145,3 +145,6 @@ L- Dosya adını güvenli hale getirir ve dosyayı dosya sisteminden kaldırır.
 - **Statik Dosya Sunma**: Hem indirmeler hem de satır içi görüntüleme için `send_from_directory` kullanımı.
 - **Kullanıcı Geri Bildirimi**: Başarı ve hata mesajlarını göstermek için Flask'ın `flash` sistemini kullanma.
 - **Filtreleme ve Toplama**: İstatistikler ve kategori tabanlı filtreler oluşturmak için dosya listelerini işleme.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ve Flask ile Web Tabanlı Gelişmiş Dosya Yöneticisi Yapımı](https://gurmezin.com/2026/06/15/python-ve-flask-ile-web-tabanli-gelismis-dosya-yoneticisi-yapimi/)

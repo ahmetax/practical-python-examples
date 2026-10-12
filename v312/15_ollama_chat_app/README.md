@@ -111,3 +111,6 @@ Implement a loop to handle model-driven tool use:
 - **State Management**: Maintaining multi-turn conversation history for local models.
 - **Frontend/Backend Integration**: Connecting a JavaScript-driven UI to a Python-based AI orchestrator.
 - **Performance Tracking**: Measuring response times and token throughput.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Yerel Yapay Zeka Asistanınızı Oluşturun: Python, Flask ve Ollama ile Akıllı Sohbet Uygulaması](https://gurmezin.com/2026/06/30/yerel-yapay-zeka-asistaninizi-olusturun-python-flask-ve-ollama-ile-akilli-sohbet-uygulamasi/)

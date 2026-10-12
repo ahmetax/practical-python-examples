@@ -123,3 +123,6 @@ Implement a `scrape(url, options)` function:
 - **User-Agent Spoofing**: Mimicking different browsers to avoid basic anti-scraping blocks.
 - **Error Handling**: Implementing robust try-except blocks for network-related failures.
 - **State Management**: Using a simple in-memory dictionary to manage a session-based history of results.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ile Kapsamlı Web Kazıyıcı (Web Scraper) Uygulaması Geliştirme](https://gurmezin.com/2026/07/17/python-ile-kapsamli-web-kaziyici-web-scraper-uygulamasi-gelistirme/)

@@ -117,3 +117,5 @@ Aşağıdaki yardımcı fonksiyonları ve route handler'ları uygulayın:
 
 ---
 
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ve Flask ile Modern Bir To-Do Uygulaması Geliştirmek](https://gurmezin.com/2026/07/12/python-ve-flask-ile-modern-bir-to-do-uygulamasi-gelistirmek/)

@@ -406,6 +406,9 @@ for f in *.py; do
     echo
 done
 ```
+## Blog Yazısı
+Bu projenin adım adım anlatımı: [Saf Python ile 17 Makine Öğrenimi Algoritması: Matematiği Kodla Keşfedin](https://gurmezin.com/2026/07/22/saf-python-ile-17-makine-ogrenimi-algoritmasi-matematigi-kodla-kesfedin/)
+
 ## Lisans
 
 MIT — kullanmak, incelemek ve değiştirmek için ücretsizdir.

@@ -111,3 +111,6 @@ Araç yürütmeyi yönetmek için özyinelemeli (recursive) benzeri bir döngü 
 - **Bağlam Yönetimi**: Çok turlu etkileşimlerde konuşma durumunu korumak.
 - **Hibrit API Mimarisi**: Birden fazla API'yi (Gemini, Tavily, CoinGecko) tek bir tutarlı uygulama altında birleştirmek.
 - **Modern Ön Yüz**: Asenkron veri işleme özellikli, duyarlı bir YZ sohbet arayüzü oluşturmak.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Google Gemini ve Flask: Fonksiyon Çağırabilen Yapay Zeka Sohbet Uygulaması](https://gurmezin.com/2026/06/27/google-gemini-ve-flask-fonksiyon-cagirabilen-yapay-zeka-sohbet-uygulamasi/)

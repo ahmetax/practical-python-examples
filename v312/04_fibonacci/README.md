@@ -73,3 +73,6 @@ This project uses a **recursive** implementation of the Fibonacci sequence:
 The script uses `time.perf_counter()` to measure the high-resolution time elapsed between calculations. 
 
 **Observation**: Because this implementation uses naive recursion without memoization, the time complexity is exponential $O(2^n)$. This makes the performance drop significantly as $n$ increases, which is clearly visible in the script's output.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Sıfırdan Fibonacci: Python’da Özyineleme ve Performans Analizi](https://gurmezin.com/2026/05/29/sifirdan-fibonacci-pythonda-ozyineleme-ve-performans-analizi/)

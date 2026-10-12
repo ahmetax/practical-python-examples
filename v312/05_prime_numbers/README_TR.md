@@ -65,3 +65,6 @@ Program, asalları belirlemek için **Deneme Bölmesi (Trial Division)** adı ve
 ## 🚀 Karmaşıklık Analizi
 - **Zaman Karmaşıklığı**: En kötü durumda $O(N^2)$'dir (burada $N$, `highnum` değeridir), çünkü her bir sayı için potansiyel olarak kendinden önceki tüm sayılar kontrol edilir.
 - **Alan Karmaşıklığı**: $O(1)$'dir, çünkü aralık boyutuna bakılmaksızın sadece birkaç değişken kullanır.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ile Asal Sayıları Keşfetmek: Döngüler ve for…else Gücü](https://gurmezin.com/2026/05/31/python-ile-asal-sayilari-kesfetmek-donguler-ve-forelse-gucu/)

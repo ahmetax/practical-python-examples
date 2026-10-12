@@ -90,3 +90,5 @@ This file contains the **Business Logic**:
 - **Invalid API Key**: Check your `.env` file and ensure the key is active (new keys can take a few hours to activate).
 - **Port Conflict**: If port 8117 is taken, you can change the port in `weather_app.py`.
 
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ve Flask ile Kendi Hava Durumu Panonuzu Yapın: API Entegrasyonundan Kullanıcı Deneyimine](https://gurmezin.com/2026/07/27/python-ve-flask-ile-kendi-hava-durumu-panonuzu-yapin-api-entegrasyonundan-kullanici-deneyimine/)

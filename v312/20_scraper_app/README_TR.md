@@ -120,3 +120,6 @@ HTML'i ayrıştırmak (parse) için **BeautifulSoup** (`bs4`) kullanın:
 - **User-Agent Taklidi (Spoofing)**: Temel anti-scraping engellerinden kaçınmak için farklı tarayıcıları taklit etme.
 - **Hata Yönetimi (Error Handling)**: Ağla ilgili arızalar için sağlam `try-except` blokları uygulama.
 - **Durum Yönetimi (State Management)**: Oturum tabanlı bir sonuç geçmişini yönetmek için basit bir bellek içi (in-memory) sözlük kullanma.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ile Kapsamlı Web Kazıyıcı (Web Scraper) Uygulaması Geliştirme](https://gurmezin.com/2026/07/17/python-ile-kapsamli-web-kaziyici-web-scraper-uygulamasi-gelistirme/)

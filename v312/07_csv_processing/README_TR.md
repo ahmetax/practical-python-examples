@@ -108,3 +108,6 @@ Pandas, veri toplama ve istatistikler için daha kısa bir yol sunar.
 - **Filtreleme**: Belirli alt kümeleri seçmek için koleksiyonlar üzerinde yineleme.
 - **Toplama (Aggregation)**: İstatistiksel değerleri manuel olarak hesaplama.
 - **Pandas DataFrame**: Pandas'ın DataFrame soyutlaması aracılığıyla veri manipülasyonunu nasıl basitleştirdiğini anlama.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ile Veri Dünyasına Giriş: CSV Dosyalarını İşleme ve Analiz Etme](https://gurmezin.com/2026/06/06/python-ile-veri-dunyasina-giris-csv-dosyalarini-isleme-ve-analiz-etme/)

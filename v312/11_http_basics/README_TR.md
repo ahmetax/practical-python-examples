@@ -224,3 +224,6 @@ pip install requests
 - **Test Servisleri**: Bu proje ücretsiz genel test servislerini (httpbin.org, jsonplaceholder.typicode.com) kullanır. Bu servislerde gerçek kimlik bilgilerini kullanmayın; bunlar sadece test amaçlıdır.
 - **Ortam Değişkenleri**: Üretim kodunda API anahtarlarını veya tokenları asla kodun içine yazmayın. Bunun yerine `os.environ.get("API_KEY")` kullanın.
 - **Hata Yönetimi**: Zaman aşımı, bağlantı hataları ve geçersiz yanıtları nazikçe yönetmek için ağ çağrılarını her zaman try/except bloklarına alın.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python requests Kütüphanesi ile HTTP Dünyasına Giriş: API’ler, Oturumlar ve Dayanıklı İstekler](https://gurmezin.com/2026/06/18/python-requests-kutuphanesi-ile-http-dunyasina-giris-apiler-oturumlar-ve-dayanikli-istekler/)

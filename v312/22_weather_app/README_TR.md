@@ -104,3 +104,6 @@ Ana sayfayı yönetmek için bir `setup_routes(app)` fonksiyonu tanımlayın:
 - **Dinamik UI**: API yanıtlarına göre içeriği koşullu olarak oluşturmak için Jinja2 şablonları kullanma.
 - **Ortam Yapılandırması (Environmental Configuration)**: Hassas API anahtarlarını kaynak koddan uzak tutmak için `.env` dosyaları kullanma.
 - **Saat Dilimi Yönetimi (Timezone Handling)**: UTC zaman damgalarından yerel gün doğumu/gün batımı saatlerini hesaplama.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ve Flask ile Kendi Hava Durumu Panonuzu Yapın: API Entegrasyonundan Kullanıcı Deneyimine](https://gurmezin.com/2026/07/27/python-ve-flask-ile-kendi-hava-durumu-panonuzu-yapin-api-entegrasyonundan-kullanici-deneyimine/)

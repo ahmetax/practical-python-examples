@@ -126,3 +126,6 @@ Create a helper module to handle all route logic and database operations.
 - **Data Visualization**: Integrating **Chart.js** to render doughnut and bar charts from Python data.
 - **Date Handling**: Using Python's `datetime` and `calendar` modules to manage monthly views and calculations.
 - **Session Flash Messages**: Providing user feedback for actions (success/error messages).
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ve Flask ile Kişisel Gider Takip Uygulaması Geliştirmek](https://gurmezin.com/2026/06/09/python-ve-flask-ile-kisisel-gider-takip-uygulamasi-gelistirmek/)

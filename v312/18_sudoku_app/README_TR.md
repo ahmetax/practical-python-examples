@@ -124,3 +124,6 @@ Frontend'i motorla bağlamak için endpoint'leri tanımlayın:
 - **Alt Süreç Yönetimi (Subprocess Management)**: Harici betiklerle (external scripts) çalışmak ve iletişim kurmak için Python'ın `subprocess` modülünü kullanmak.
 - **Gerçek Zamanlı Web Animasyonu (Real-time Web Animation)**: Algoritmik adımların kaydedilmiş bir dizisini oynatmak için JavaScript kullanmak.
 - **Karmaşıklık Analizi (Complexity Analysis)**: Algoritma karşılaştırması için yürütme süresini nanosaniyede ölçmek.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ile Sudoku Uygulaması Geliştirme: Backtracking Algoritması ve Web Entegrasyonu](https://gurmezin.com/2026/07/09/python-ile-sudoku-uygulamasi-gelistirme-backtracking-algoritmasi-ve-web-entegrasyonu/)

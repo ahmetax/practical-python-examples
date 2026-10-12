@@ -50,3 +50,6 @@ python3 hello_world.py
 - How to write a basic Python script with a docstring.
 - How to use the `print()` function.
 - How to execute Python files from the command line.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python Öğreniyorum: İlk Programınızı Yazın ve Çalıştırın (Adım Adım Rehber)](https://gurmezin.com/2026/05/24/python-ogreniyorum-ilk-programinizi-yazin-ve-calistirin-adim-adim-rehber/)

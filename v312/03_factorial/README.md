@@ -61,3 +61,6 @@ This project uses **Recursion**, a technique where a function calls itself to so
 
 **Mathematical Logic:**
 $n! = n \times (n-1) \times (n-2) \times \dots \times 1$
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ile Faktöriyel Hesaplama: Rekürsif Yaklaşım ve Mantığı](https://gurmezin.com/2026/05/27/python-ile-faktoriyel-hesaplama-rekursif-yaklasim-ve-mantigi/)

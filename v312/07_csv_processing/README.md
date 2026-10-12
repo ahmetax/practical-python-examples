@@ -108,3 +108,6 @@ Pandas provides a more concise way to handle data aggregation and statistics.
 - **Filtering**: Iterating through collections to select specific subsets.
 - **Aggregation**: Manually computing statistical values.
 - **Pandas DataFrame**: Understanding how Pandas simplifies data manipulation through its DataFrame abstraction.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ile Veri Dünyasına Giriş: CSV Dosyalarını İşleme ve Analiz Etme](https://gurmezin.com/2026/06/06/python-ile-veri-dunyasina-giris-csv-dosyalarini-isleme-ve-analiz-etme/)

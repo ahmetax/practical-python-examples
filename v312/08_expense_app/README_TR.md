@@ -126,3 +126,6 @@ Tüm rota mantığını ve veritabanı işlemlerini yönetmek için bir yardımc
 - **Veri Görselleştirme**: Python verilerinden halka ve sütun grafikleri oluşturmak için **Chart.js** entegrasyonu.
 - **Tarih Yönetimi**: Aylık görünümleri ve hesaplamaları yönetmek için Python'un `datetime` ve `calendar` modüllerinin kullanımı.
 - **Oturum Flash Mesajları**: Eylemler için kullanıcı geri bildirimi (başarı/hata mesajları) sağlama.
+
+## 📝 Blog Yazısı
+Bu projenin adım adım anlatımı: [Python ve Flask ile Kişisel Gider Takip Uygulaması Geliştirmek](https://gurmezin.com/2026/06/09/python-ve-flask-ile-kisisel-gider-takip-uygulamasi-gelistirmek/)

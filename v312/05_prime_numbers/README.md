@@ -65,3 +65,6 @@ The program uses a technique called **Trial Division** to identify primes:
 ## 🚀 Complexity Analysis
 - **Time Complexity**: $O(N^2)$ in the worst case, where $N$ is the `highnum`, because for every number, it potentially checks all preceding numbers.
 - **Space Complexity**: $O(1)$, as it only uses a few variables regardless of the range size.
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ile Asal Sayıları Keşfetmek: Döngüler ve for…else Gücü](https://gurmezin.com/2026/05/31/python-ile-asal-sayilari-kesfetmek-donguler-ve-forelse-gucu/)

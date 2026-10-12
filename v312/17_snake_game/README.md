@@ -116,3 +116,6 @@ Implement `bfs_next_dir(state)` to find the shortest path to the food:
 - **Event-Driven Programming**: Handling asynchronous keyboard inputs in a GUI.
 - **Time Management**: Controlling game speed through sleep intervals.
 - **State Machines**: Managing transitions between "Alive", "Game Over", and "AI Mode".
+
+## 📝 Blog Post
+Step-by-step walkthrough of this project (in Turkish): [Python ile Klasik Yılan Oyunu Geliştirme: tkinter ve BFS Algoritması](https://gurmezin.com/2026/07/06/python-ile-klasik-yilan-oyunu-gelistirme-tkinter-ve-bfs-algoritmasi/)
