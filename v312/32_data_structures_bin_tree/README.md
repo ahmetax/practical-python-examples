@@ -1,37 +1,57 @@
-# Project 32: Binary Search Tree Data Structure
+# Project 32: Binary Search Tree
 
-An object-oriented implementation of a standalone Binary Search Tree (BST) built natively from scratch. This project demonstrates reference/pointer node linkage, conditional traversal mechanics, and deep recursive tree manipulation strategies.
+A binary search tree (BST) built from scratch with two classes, `Node` and `BinarySearchTree`. Values smaller than a node go to its left, values greater than or equal to it go to its right. The tree supports three operations:
 
-## Architectural Goal
-The application provides a structural alternative to flat indexing tables. By maintaining hierarchical branch properties—where any child entity left of a parent holds a lesser evaluation, and any child right holds a greater value—the system establishes execution frameworks capable of running lookups and node updates in linearithmic logarithmic time ($O(\log n)$).
+| Method | What it does |
+|--------|--------------|
+| `insert(value)` | Walks down from the root and adds the value as a new leaf |
+| `search(target)` | Returns `True` or `False`; at each node it continues only into the left or the right subtree |
+| `get_inorder_list()` | In-order traversal (left, node, right), which returns the values in sorted order |
+
+There is no delete or update operation.
+
+## How It Works
+- `Node` holds a `value` and two references, `left` and `right`, both starting as `None`.
+- `insert()`, `search()` and the traversal are all recursive helper methods (`_insert_recursive`, `_search_recursive`, `_inorder_recursive`).
+- Duplicates are allowed: an equal value goes to the right subtree, so inserting `5` three times gives `[5, 5, 5]` in the traversal.
+- Search and insert take O(log n) steps on average, but only when the tree stays balanced. The tree does not balance itself: if you insert values that are already sorted, every node goes to the right, the tree becomes a linked list and both operations take O(n) steps. Because the methods are recursive, inserting 1,000 sorted values (`for i in range(1000): bst.insert(i)`) stops with `RecursionError: maximum recursion depth exceeded` under the default recursion limit.
 
 ## Project Structure
 ```text
 32_data_structures_bin_tree/
-└── main.py
+├── main.py
+├── README.md
+└── README_TR.md
+```
 
-System Requirements
-OS: Ubuntu 24.04 (or any Linux/UNIX-compatible ecosystem)
-Runtime: Python 3.12+ (Leverages modern union notation Node | None)
-Dependencies: None (Uses standard library built-ins)
+## Requirements
+- Python 3.11 or newer. The `Node | None` annotations need 3.10, but `main.py` also contains `from typing import Self` (added in 3.11, not used in the code), so on Python 3.10 the script stops with `ImportError: cannot import name 'Self' from 'typing'`. Tested on 3.12.3 and 3.11.
+- No third-party packages.
 
-How to Recreate This Project From Scratch
-### Step 1: Directory Setup
-Create a dedicated project directory structure within your repository workspace:
+## Running
 ```bash
-mkdir 32_data_structures_bin_tree
-cd 32_data_structures_bin_tree
+python3 main.py
+```
 
-### Step 2: Assemble the Tree Classes
-Create a file named main.py. Structure your hierarchical entities step-by-step:
-1. Design a Node Blueprint: Create a basic structure class called Node. Inside its initializer (__init__), accept an integer data variable, and map two default child pointer fields initialized explicitly to None (self.left and self.right).
-2. Design the Master Tree Shell: Create a coordinating class called BinarySearchTree initialized with an empty single entry pointer (self.root = None).
-3. Incorporate Recursive Insertion: Create a public insert(value) method. If self.root doesn't exist, bind the new value there immediately. Otherwise, pass the node down to an internal tracking method _insert_recursive(current_node, value). Compare the new value to the current node value to determine whether to branch left or right, and recursively follow the tree until a vacant leaf position (None) is found.
-4. Incorporate Specialized Lookup Routing: Implement a search(target) function that steps down branches recursively. Since the data is organized, you don't need to scan every node; lookups can jump past entire sub-trees based on value comparisons, achieving an average time complexity of $O(\log n)$.
-5. Implement an In-Order Sort Traversal: Build an analytical visualization sequence using an in-order algorithm strategy (_inorder_recursive(node, list)). Program the traversal sequence order to step left first, collect the parent center second, and traverse right last. When performed on a valid BST layout, this strategy naturally outputs values in perfectly sorted ascending order.
+## Sample Output (Python 3.12.3)
+```text
+--- Custom Binary Search Tree Engine Started ---
 
-### Step 3: Run and Verify
-Add a driver evaluation script at the bottom of main.py. Instantiate your class, populate it with an unsorted array of numbers, execute an in-order print lookup, and attempt targeted value queries to verify your tracking logic. Run the script:
+Inserting data sequentially: [50, 30, 70, 20, 40, 60, 80]
+Tree populated successfully.
+-------------------------------------------------------
+=== 1. Tree Traversal Assessment ===
+In-Order Traversal Output (Sorted): [20, 30, 40, 50, 60, 70, 80]
+-------------------------------------------------------
 
-```bash
-python main.py
+=== 2. Targeted Binary Lookup Testing ===
+Searching for target element [40]: FOUND
+Searching for target element [99]: NOT FOUND
+Searching for target element [20]: FOUND
+-------------------------------------------------------
+```
+The insertion order `[50, 30, 70, 20, 40, 60, 80]` produces a perfectly balanced tree of depth 3.
+
+## Resources
+- Blog post (Turkish): https://gurmezin.com/2026/09/01/python-ile-ikili-arama-agaci-verileri-kendi-kendine-siralayan-bir-yapi-kurmak/
+- Python Tutorial, Classes: https://docs.python.org/3/tutorial/classes.html

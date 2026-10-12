@@ -1,64 +1,68 @@
-# Proje 34: Poetry ile Modern Paket Yönetimi
+# Proje 34: Poetry ile Paket Yönetimi
 
-Python üçüncü taraf bağımlılıklarının, alt bağımlılık çözümleme izolasyonunun ve sanal ortamların modern endüstri standardı olan `Poetry` kullanılarak nasıl yönetileceğini gösteren bir üretim düzeyinde örnektir. Bu proje, `pip` ve `requirements.txt` gibi geleneksel eski iş akışlarını tamamen ortadan kaldırmaktadır.
+Bir projenin bağımlılıklarını `pip` ve `requirements.txt` dosyası yerine [Poetry](https://python-poetry.org/) ile yönetmeyi gösteren küçük bir örnek. Bağımlılıklar `pyproject.toml` dosyasında tanımlanır. Poetry'nin çözümlediği tam sürümler (alt bağımlılıklar ve özet değerleri dahil) `poetry.lock` dosyasında sabitlenir. Bu klasörde `poetry install` komutunu çalıştıran herkes aynı paket sürümlerini kurar.
 
-## Mimari Hedef
-Sistem, bağımlılık çözümlemesine deterministik bir plan şeması tasarlamaktadır. Gevşek eşleştirilmiş gereksinim sayfalarını, katı, tekrarlanabilir kilit manifestoları (`poetry.lock`) ile değiştirerek, tam yazılım bileşen ağaçlarının tüm yerel geliştirici makinelerinde, staging kümelerinde ve otomatik sürekli dağıtım (CD) iş akışlarında aynı şekilde kopyalanmasını garanti eder.
+`src/main.py`, üçüncü taraf `rich` paketini kullanarak hangi Python yorumlayıcısıyla çalıştığını gösteren bir tablo yazdırır. Betiği `poetry run` ile başlattığınızda bu yorumlayıcı, Poetry'nin proje için oluşturduğu sanal ortamdaki yorumlayıcıdır.
+
+## Nasıl Çalışır?
+- `pyproject.toml` iki çalışma zamanı bağımlılığı (`rich >=15,<16` ve `requests >=2.34.2,<3`) ile `dev` grubunda bir geliştirme bağımlılığı (`pytest >=9.0.3,<10`) tanımlar. `requests` ve `pytest` kodda kullanılmaz; çalışma zamanı ve geliştirme gruplarını göstermek için eklenmiştir. Projede test dosyası yoktur.
+- `poetry.lock` toplam 14 paketi sabitler (yukarıdaki üç paket ve `certifi`, `urllib3`, `markdown-it-py`, `pygments` gibi alt bağımlılıkları).
+- `poetry install` bir sanal ortam oluşturur ve kilit dosyasındaki sürümleri birebir kurar. `poetry run <komut>` ise bir komutu, ortamı etkinleştirmenize gerek kalmadan o ortamın içinde çalıştırır.
+- Çıktıdaki "Successfully Resolved via Poetry" yazısı kodda sabit bir metindir. Tablo yalnızca `rich` paketinin içe aktarılabildiğini gösterir, nasıl kurulduğunu değil.
 
 ## Proje Yapısı
 ```text
 34_poetry_package_management/
+├── poetry.lock
 ├── pyproject.toml
+├── README.md
+├── README_TR.md
 └── src/
     └── main.py
+```
 
-## System Requirements
-- OS: Ubuntu 24.04 (or any Linux/UNIX-compatible system)
-- Runtime: Python 3.12+
-- Global Dependency: Poetry engine installed globally or user-wide on your system.
+## Gereksinimler
+- Python 3.12 veya üstü (`pyproject.toml` içinde `requires-python = ">=3.12"`; kilitli paketlerin kendisi 3.10+ ister). Python 3.12.3 ile test edilmiştir.
+- Poetry 2.3 veya üstü. Kilit dosyası Poetry 2.4.1 ile oluşturulmuştur ve geliştirme grubu standart `[dependency-groups]` tablosunu kullanır. Poetry 2.1 ve 2.2 bu kilit dosyasını "pyproject.toml changed significantly since poetry.lock was last generated" hatasıyla reddeder. Poetry 2.3.0, 2.4.0 ve 2.5.1 ile test edilmiştir.
 
-## Setting Up Poetry on Ubuntu
-If you do not have Poetry installed on your host system, install it using the official standard installation script:
-
+Poetry'yi `pipx` ile kurun (önerilen yol):
+```bash
+sudo apt install pipx
+pipx install poetry
+poetry --version
+```
+ya da resmî kurulum betiğiyle:
 ```bash
 curl -sSL https://install.python-poetry.org | python3 -
+```
 
-Kurulumu, sürüm izini kontrol ederek doğrulayın:
+## Çalıştırma
 ```bash
-poetry --version
-
-## How to Recreate This Project From Scratch
-### Step 1: Directory and Package Initialisation
-Create a dedicated folder for this project inside your repository workspace:
-
-```bash
-mkdir 34_poetry_package_management
 cd 34_poetry_package_management
-
-Yapılandırma şemalarını manuel olarak yazmak yerine, standart bir düzeni yerel olarak şu yolla başlatabilirsiniz:
-```bash
-poetry init --no-interaction
-
-This generates your fundamental structure mapping blueprint, pyproject.toml.
-
-### Step 2: Configuring Dependencies and Source Code
-- Define the pyproject.toml Layout: Ensure your pyproject.toml lists target constraints, including specific runtime platforms (e.g., python = "^3.12"), core packages (like requests and rich), and isolated developer groups (pytest).
-
-- Add Dependencies Programmatically: Instead of editing raw files, add libraries using Poetry's interactive CLI. This triggers immediate cryptographic calculation checks and resolves sub-dependency graphs cleanly:
-
-```bash
-poetry add rich requests
-poetry add pytest --group dev
-
-- Uygulama Giriş Noktasını Taslağını Oluşturma: Bir `src/` dizini oluşturun ve `main.py` ekleyin. Kodunuzun, `runtime` sırasında izole edilmiş paket yapılarına temiz bir şekilde erişebildiğini doğrulamak için yeni yönettiğiniz bağımlılıkları—örneğin `rich.table`—içe aktarın.
-
-### Adım 3: Çalıştırma ve Doğrulama
-Poetry, tüm bağımlılıkları özel bir sanal ortam katmanı içinde izole eder. Uygulama kodunu bu korumalı bağlam içinde çalıştırmak için `poetry run` komut sarmalını (wrapper) kullanın:
-```bash
+poetry install --no-root
 poetry run python3 src/main.py
+```
+`--no-root` seçeneğini kullanın. Bu klasör kurulabilir bir paket değildir. Bu yüzden düz `poetry install` önce tüm bağımlılıkları kurar, sonra hata vererek durur (çıkış kodu 1):
+```text
+Error: The current project could not be installed: No file/folder found for package 34-poetry-package-management
+If you do not want to install the current project use --no-root.
+```
+Diğer bir yol da `pyproject.toml` dosyasına bir `[tool.poetry]` tablosu ekleyip altına `package-mode = false` yazmaktır. Bundan sonra düz `poetry install` de çalışır.
 
-This activates the runtime layer seamlessly on the fly and outputs a beautifully formatted system visualization matrix inside your Ubuntu CLI interface.
+## Örnek Çıktı (Python 3.12.3)
+```text
+                      Poetry Managed Environment Metadata                       
+┏━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Parameter              ┃ Value                                               ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ Python Executable Path │ /home/you/.cache/pypoetry/virtualenvs/34-poetry-pa… │
+│ Python Version         │ 3.12.3                                              │
+│ Rich Library Status    │ Successfully Resolved via Poetry                    │
+└────────────────────────┴─────────────────────────────────────────────────────┘
+```
+Yorumlayıcı yolu makinenize ve Poetry ayarlarınıza göre değişir. Rich, terminal genişliğine sığmayan değerleri `…` ile kısaltır.
 
-
----
-
+## Kaynaklar
+- Blog yazısı: https://gurmezin.com/2026/09/08/requirements-txtye-veda-poetry-ile-python-paket-yonetimi/
+- Poetry belgeleri: https://python-poetry.org/docs/
+- Rich belgeleri: https://rich.readthedocs.io/

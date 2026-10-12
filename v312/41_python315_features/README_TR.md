@@ -1,6 +1,6 @@
 # Proje 41: Python 3.15 Yenilikler Turu
 
-Python 3.15'in (kararlı sürüm 9 Ekim 2026'da bekleniyor) öne çıkan yeniliklerini çalıştırılabilir örneklerle gösteren proje.
+Python 3.15'in öne çıkan yeniliklerini çalıştırılabilir örneklerle gösteren proje. 3.15.0rc2 ve 3.15.0rc3 sürüm adaylarıyla test edildi.
 
 | # | Yenilik | PEP |
 |---|---------|-----|
@@ -20,7 +20,7 @@ Python 3.15'in (kararlı sürüm 9 Ekim 2026'da bekleniyor) öne çıkan yenilik
 
 ## Gereksinimler
 - Python 3.15 (3.15.0rc2 veya üstü). Üçüncü taraf paket gerekmez.
-- Daha eski sürümlerde betik bir mesajla sonlanır.
+- Daha eski sürümler betiği hiç çalıştıramaz. Kavrayış içinde açma sözdizimi (PEP 798) derleme aşamasında `SyntaxError: iterable unpacking cannot be used in comprehension` hatasıyla reddedilir; bu yüzden `main.py`'nin başındaki sürüm kontrolü mesajını yazmaya fırsat bulamaz.
 
 ## Çalıştırma
 
@@ -43,5 +43,6 @@ lazy imports  :   20.7 ms  (7.9x faster startup)
 ```
 Süreler makineye göre değişir; asıl önemli olan oran.
 
-## Ek Okuma
-- What's New in Python 3.15: https://docs.python.org/3.15/whatsnew/3.15.html
+## Kaynaklar
+- Blog yazısı: https://gurmezin.com/2026/10/05/python-3-15-geliyor-lazy-import-frozendict-varsayilan-utf-8/
+- Python 3.15 yenilikleri (What's New): https://docs.python.org/3.15/whatsnew/3.15.html

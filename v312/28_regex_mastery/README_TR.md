@@ -1,41 +1,80 @@
-# Proje 28: Regex Uzmanlığı ve Log Ayrıştırma Motoru
+# Proje 28: Düzenli İfadelerle Log Satırlarını Ayrıştırma
 
-Python'ın standart `re` motoru aracılığıyla gelişmiş desen eşleştirme stratejileri gösteren, sağlam, kurumsal düzeyde bir yardımcı program. Bu mimari, ham, biçimlendirilmemiş metin dökümlerini nasıl tarayacağınızı ve adlandırılmış yakalama parametreleri, koşullu lookaround'lar ve çok satırlı pipeline yapılandırma bayrakları kullanarak bunları temiz yapılara nasıl deserilize edeceğinizi özetlemektedir.
+Düz metin log satırlarını tek bir düzenli ifadeyle Python sözlüklerine dönüştürür. Yalnızca standart `re` ve `json` modüllerini kullanır.
 
-## Mimari Amaç
-Motor, analitik bir log toplayıcı veya denetim hattı görevi görür. Düz metin akışlarını (üretim sistemi dökümleri gibi) alır, katı sınırları yapısal parametrelere (Zaman Damgaları, Seviyeler, IP Ayak İzleri, Alt Bileşenler ve Durum Kodları) eşler ve ağır üçüncü taraf ayrıştırma ajanlarına ihtiyaç duymadan aranabilir Python sözlükleri döndürür.
+| Teknik | Kullanıldığı yer |
+|--------|------------------|
+| İsimli gruplar `(?P<ad>...)` ve `match.groupdict()` | `parse_system_logs()` |
+| `^` ve `$` her satırda eşleşsin diye `re.MULTILINE` | iki fonksiyonda da |
+| `[code:NNN]` eki için isteğe bağlı grup `(?:...)?` | `parse_system_logs()` |
+| Mesaj kodu da yutmasın diye tembel niceleyici `.+?` | `parse_system_logs()` |
+| İleriye bakma `(?=...)` ve `re.IGNORECASE` | `extract_critical_failures_with_lookahead()` |
+
+## Nasıl Çalışır?
+Her log satırı şu biçimdedir:
+```text
+[2026-05-22 08:30:15,123] [ERROR] [auth.service] (192.168.1.50) - Invalid credentials provided [code:401]
+```
+- `parse_system_logs()` metni `finditer()` ile tarar ve her eşleşmeyi `timestamp`, `level`, `component`, `ip_address`, `message` ve `status_code` anahtarlı bir sözlüğe çevirir. `status_code` değeri `int` türüne dönüştürülür; satırda `[code:...]` kısmı yoksa `None` olur.
+- `extract_critical_failures_with_lookahead()` içinde herhangi bir yerde `[database]` geçen ve ayrıca `denied` ya da `failed` kelimesini (büyük/küçük harf fark etmeden) içeren satırları olduğu gibi döndürür. Örnek veride iki koşulu birden sağlayan tek satır vardır; `payment.gateway` satırında `failed` geçer ama bu bir veritabanı satırı değildir.
+
+Bilinmesi gereken sınırlar (fonksiyonlar ek girdilerle çalıştırılarak denendi):
+- Desene uymayan satırlar sessizce atlanır. Örneğin `[DEBUG]` izin verilen seviyeler arasında değildir (`INFO|WARNING|ERROR|CRITICAL`) ve sonuçta hiç görünmez.
+- IP deseni `\d{1,3}(?:\.\d{1,3}){3}` yalnızca biçime bakar; `999.300.1.1` de kabul edilir.
+- Windows satır sonlarında (`\r\n`) `$`, `\r` karakterinden sonra eşleşir ve kod grubu artık uymaz: mesaj `'Invalid credentials provided [code:401]\r'` olur, `status_code` ise `None` kalır. Böyle dosyaları ayrıştırmadan önce `splitlines()` kullanın ya da `\r` karakterlerini temizleyin.
+- İleriye bakma, `[database]` ifadesini satırın her yerinde arar; mesajında `[database]` geçen bir satır da eşleşir.
 
 ## Proje Yapısı
 ```text
 28_regex_mastery/
-└── main.py
-System Requirements
-OS: Ubuntu 24.04 (or any Linux/UNIX-based system environment)
+├── main.py
+├── README.md
+└── README_TR.md
+```
 
-Runtime: Python 3.12+
+## Gereksinimler
+- Python 3.9 veya üstü (`list[dict]` tip ipuçları 3.9 gerektirir). Python 3.12.3 (Ubuntu 24.04) ile test edildi.
+- Üçüncü taraf paket gerekmez.
 
-Dependencies: None (Uses standard library built-ins)
-
-How to Recreate This Project From Scratch
-### Step 1: Directory Setup
-Create a dedicated folder for your project within your workspace:
-
-Bash
-mkdir 28_regex_mastery
-cd 28_regex_mastery
-### Step 2: Assemble the Pattern Matching Engine
-Create a file named main.py. Build out your processing routines sequentially:
-
-Construct Named Groups: Implement an ingestion routine (e.g., parse_system_logs(raw_log_data)). Draft a compiled regex object (re.compile) that sets explicit variable key signatures onto individual slices of text via the (?P<name>...) syntax.
-
-Handle Optional Tokens: Account for parameters that might not occur on every line (like HTTP or exception error codes) by grouping the sub-pattern and appending the non-greedy optional operator (?), for instance: (?:\s+\[code:(?P<status_code>\d+)\])?$.
-
-Loop Over Stream Iterations: Run the .finditer() method across target logs. Inside the iteration block, invoke .groupdict() on each individual match element to transform text instantly into structured key-value maps.
-
-Incorporate Lookahead Assertions: Implement an analytical filtration function using Lookarounds (e.g., extract_critical_failures_with_lookahead). Design a pattern utilizing non-consuming assertions like (?=.*\[database\]) to ensure lines belong to a specific category before checking for strings like denied or failed.
-
-### Step 3: Run and Verify
-Add a sample multi-line mock text log layout at the bottom of the script. Run the script via the terminal to confirm that the text blocks are correctly parsed into clean JSON schemas and filtered appropriately.
-
+## Çalıştırma
 ```bash
-python main.py
+python3 main.py
+```
+
+## Örnek Çıktı (Python 3.12.3)
+```text
+--- Advanced Regex Analytical Engine Started ---
+
+=== 1. Parsing Full Log Stack via Named Capture Groups ===
+[
+  {
+    "timestamp": "2026-05-22 08:30:12,001",
+    "level": "INFO",
+    "component": "web.server",
+    "ip_address": "192.168.1.10",
+    "message": "Connection established successfully",
+    "status_code": null
+  },
+  {
+    "timestamp": "2026-05-22 08:30:15,123",
+    "level": "ERROR",
+    "component": "auth.service",
+    "ip_address": "192.168.1.50",
+    "message": "Invalid credentials provided",
+    "status_code": 401
+  }
+]
+Total structured log profiles extracted: 6
+-----------------------------------------------------------------
+
+=== 2. Filtering Specific Contexts using Lookaheads ===
+Targeting lines matching 'database' containing failures ('denied' / 'failed'):
+  Match #1: [2026-05-22 08:31:05,890] [CRITICAL] [database] (10.0.0.5) - Access denied for user 'admin_app' [code:1045]
+-----------------------------------------------------------------
+```
+Ayrıştırılan altı kaydın yalnızca ilk ikisi yazdırılır.
+
+## Kaynaklar
+- Blog yazısı: https://gurmezin.com/2026/08/22/pythonda-regex-ustalik-sinifi-karmasik-log-dosyalarini-duzenli-veriye-donusturmek/
+- `re` belgeleri: https://docs.python.org/3/library/re.html
+- Düzenli İfade Rehberi (Regular Expression HOWTO): https://docs.python.org/3/howto/regex.html

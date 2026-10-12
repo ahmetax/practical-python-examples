@@ -1,43 +1,50 @@
-# Proje 25: Asyncio Temelleri ve Yapılandırılmış Eşzamanlılık
+# Proje 25: TaskGroup ile Asyncio Temelleri
 
-Python'ın standart `asyncio` ekosistemini kullanarak bloklamayan I/O rutinlerinin temel bir uygulaması. Bu örnek, `async/await` ve yapılandırılmış görev orkestrasyonu yoluyla güvenli bağlam havuzlama kullanarak modern asenkron tasarım desenlerini gösterir.
-
-## Mimari Hedef
-Uygulama, bir e-ticaret platformu için bir toplama yönlendiricisini simüle eder. Bireysel Core Product Details'ı almak, Real-time Inventory Stocks'u kontrol etmek ve Public Customer Reviews'ı almak gibi birden fazla farklı yukarı akış mikroservisini eşzamanlı olarak sorgulaması gerekir; bu, bağımlı olmayan darboğazları aynı anda çalıştırarak nihai işlem gecikmelerini (latencies) en aza indirir.
+Üç eşyordam (coroutine), bir ürün için yavaş çağrıları taklit eder: ürün ayrıntıları (1,5 sn), stok durumu (1,0 sn) ve kullanıcı yorumları (2,0 sn). Gecikmeler `asyncio.sleep()` ile üretilir; gerçek bir ağ ya da veritabanı erişimi yoktur. Eşyordamlar bir `asyncio.TaskGroup` içinde birlikte başlatılır; bu yüzden toplam süre, sürelerin toplamı (4,5 sn) yerine en yavaş olanın süresi (2,0 sn) kadardır. Sonuçlar ardından tek bir sözlükte birleştirilir.
 
 ## Proje Yapısı
 ```text
 25_asyncio_basics/
-└── main.py
-System Requirements
-OS: Ubuntu 24.04
+├── main.py
+├── README.md
+└── README_TR.md
+```
 
-Runtime: Python 3.11+ (Required for asyncio.TaskGroup context syntax)
+## Gereksinimler
+- Python 3.11 veya üstü (`asyncio.TaskGroup` 3.11'de eklendi). 3.10'da betik `AttributeError: module 'asyncio' has no attribute 'TaskGroup'` hatası verir. 3.12.3 ile test edildi; 3.11'de de çalışır.
+- Üçüncü taraf paket gerekmez.
 
-Dependencies: None (Uses standard library built-ins)
-
-## How to Recreate This Project From Scratch
-### Step 1: Directory Setup
-Establish the project directory:
-
+## Çalıştırma
 ```bash
-mkdir 25_asyncio_basics
-cd 25_asyncio_basics
+python3 main.py
+```
 
-### Adım 2: Bloklamayan Pipeline'ı Uygulama
-main.py dosyasını oluşturun ve görev yürütmelerini bu sistematik katmanlar aracılığıyla yönetin:
+## Örnek Çıktı (Python 3.12.3)
+```text
+--- Asyncio Testing Started ---
 
-Async I/O Çağrılarını Simüle Etme: Her mikroservis sınırı için `async def` descriptor'ını kullanarak bağımsız coroutine'ler yazın. Ana yürütme iş parçacığını dondurmadan veritabanı veya web hizmeti çağrılarını taklit etmek için değişken yapay yürütme gecikme boşlukları (örneğin, 1.0s, 1.5s, 2.0s) eklemek için `await asyncio.sleep()` kullanın.
+--- Starting Concurrent Tasks for Product ID 99 ---
+[Product] Fetching details for ID 99...
+[Stock] Checking inventory for ID 99...
+[Reviews] Gathering customer reviews for ID 99...
+[Stock] Done checking inventory for ID 99.
+[Product] Done fetching details for ID 99.
+[Reviews] Done gathering reviews for ID 99.
 
-Task Havuzlarını Kullanma: Birincil async orchestrator fonksiyonunuzda (`async def main()`), Python 3.11+'ın gelişmiş context manager'ını kullanarak izole bir yürütme kapsamı oluşturun: async with asyncio.TaskGroup() as tg:
+--- Aggregated Result ---
+{'id': 99, 'name': 'Premium Wireless Mouse', 'price': 49.99, 'in_stock': True, 'quantity': 142, 'reviews': [{'user': 'Alice', 'rating': 5}, {'user': 'Bob', 'rating': 4}]}
 
-Eşzamanlılığı Planlama: Bireysel sorguları `tg.create_task()` aracılığıyla grup yöneticisine kaydedin. Bu, dahili event loop'u tüm işlemlerin paralel izler üzerinde eş zamanlı olarak ateşlenmesi için planlamaya yönlendirir.
+Successfully fetched all data in: 2.00 seconds.
+```
+Ölçülen süre hem Python 3.12.3'te hem 3.11'de 2.00 saniyeydi. Yapılan iş yalnızca `asyncio.sleep()` olduğu için sonuç her makinede 2,0 saniyeye çok yakın çıkar.
 
-Toplamları Tüketme: Yürütme TaskGroup context bloğundan çıktıktan sonra, kaydedilen tüm görevlerin yapısal olarak güvenli bir şekilde tamamlandığı garanti edilir. Hesaplanan dataset payload'larını `.result()` kullanarak çıkarın ve bunları tek bir kapsamlı dictionary payload'unda birleştirin.
+## Nasıl Çalışır?
+- `async with asyncio.TaskGroup() as tg:` bir grup açar; her `tg.create_task(...)` çağrısı bir eşyordamı hemen sıraya koyar. Üç "Fetching/Checking/Gathering" satırının hepsi, hiçbiri bitmeden yazdırılır.
+- Bir eşyordam `await asyncio.sleep(...)` ile beklerken olay döngüsü (event loop) diğerlerini çalıştırır. Her şey tek bir iş parçacığında çalışır; bu paralellik değil, eşzamanlılıktır.
+- `Done` satırları gecikme sırasıyla gelir: stok (1,0 sn), ürün (1,5 sn), yorumlar (2,0 sn).
+- `async with` bloğu, tüm görevler bitmeden sona ermez; bu yüzden ardından `.result()` güvenle çağrılabilir. Görevlerden biri hata fırlatırsa grup kalan görevleri iptal eder ve hatayı bir `ExceptionGroup` içinde yükseltir.
+- `{**product_info, **stock_info, "reviews": ...}` sözlükleri birleştirir. İkisinde de `id` anahtarı olduğundan sonraki değer geçerli olur (burada ikisi de 99).
 
-### Adım 3: Performans Doğrulaması
-Runtime'ı, `time.perf_counter()` aracılığıyla farkları izleyen bir benchmark saati içine sarın. Mutlak son işlem süresinin, ardışık olarak birikmek yerine (1.5 + 1.0 + 2.0 = 4.5 saniye) tek en yavaş görevin hızına (~2.0 saniye) eşleştiğini fark edin.
-```bash
-python main.py
-
-
+## Kaynaklar
+- Blog yazısı: https://gurmezin.com/2026/08/10/python-asyncio-ile-hizlanin-modern-eszamanlilik-ve-taskgroup/
+- `asyncio` görev grupları: https://docs.python.org/3/library/asyncio-task.html#task-groups

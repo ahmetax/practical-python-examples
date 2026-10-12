@@ -1,46 +1,62 @@
-# Project 35: Multiprocessing Foundations
+# Project 35: Multiprocessing Basics
 
-A computational benchmark project demonstrating how to execute parallel, CPU-bound workloads from scratch using Python's standard `multiprocessing` module. This architecture showcases how to spin up independent operating system processes to completely bypass the limitations of Python's Global Interpreter Lock (GIL).
+A short example of running CPU-bound work in parallel with the standard `multiprocessing` module. Because of the Global Interpreter Lock (GIL), only one thread at a time can run Python code inside a single interpreter. Separate processes each have their own interpreter and their own GIL, so they can use several CPU cores at the same time.
 
-## Architectural Goal
-The application shifts away from synchronous execution loops or thread-sharing pools. When handling heavy computational operations (such as mathematical factorials, image rendering, or dataset transformations), standard threads compete for the same execution core due to the GIL. This module maps distinct workloads directly onto isolated operating system processes, forcing true parallel resource usage across all available CPU cores.
+## How It Works
+- `compute_heavy_factorial(name, number)` computes `number!` with a plain loop and prints how long it took. Multiplying ever-larger integers keeps one CPU core busy.
+- The main block starts four `multiprocessing.Process` objects for 50000!, 55000!, 60000! and 65000!, then waits for all of them with `join()`.
+- The total time is printed at the end. The factorial results are thrown away: a `Process` does not pass its function's return value back to the parent (that needs a `Pool` or a `Queue`).
+- The `if __name__ == "__main__":` guard is required. With the `spawn` start method (the default on Windows and macOS) and `forkserver` (the default on Linux from Python 3.14), child processes re-import `main.py`; without the guard they would try to start new processes themselves.
+- The names `Worker-Core-1` … `Worker-Core-4` are only labels. The code does not pin processes to cores; the operating system decides where each process runs.
 
 ## Project Structure
 ```text
 35_multiprocessing_basics/
-└── main.py
+├── main.py
+├── README.md
+└── README_TR.md
 ```
-**System Requirements**
-- OS: Ubuntu 24.04 (or any Linux/UNIX-compatible multi-core environment)
-- Runtime: Python 3.12+
-- Dependencies: None (Uses standard library built-ins)
 
-## How to Recreate This Project From Scratch
-### Step 1: Directory Setup
-Create a dedicated folder for this project inside your repository workspace:
+## Requirements
+- Python 3.6 or newer (f-strings). Tested on 3.12.3, also runs on 3.15.0rc2.
+- No third-party packages.
+- A machine with at least four CPU cores shows the full effect.
 
-```bash
-mkdir 35_multiprocessing_basics
-cd 35_multiprocessing_basics
-```
-### Step 2: Implement the Parallel Computing Engine
-Create a file named main.py. Build your concurrent execution layer step-by-step:
-
-Protect the Entrypoint Execution: Always safeguard your execution block with if __name__ == "__main__":. This is mandatory in multiprocessing; when a new process is spawned, it re-imports the main file, and without this guard, the child process would trigger an infinite, recursive loop of spawning more processes.
-
-Draft the Computational Task: Design a CPU-bound mathematical function (e.g., compute_heavy_factorial) that handles dense loops to keep individual processes engaged.
-
-Instantiate and Launch Processes: Loop through your dataset arrays. For each target workload, construct a separate execution tracking worker instance using multiprocessing.Process(target=..., args=...). Invoke .start() on each instance to command the Ubuntu kernel to map out fresh independent execution memory addresses.
-
-Synchronize Main Loop Lifecycles: Iterate through your array of active process objects and call .join() on each worker. This forces the main master daemon process to pause and wait for all concurrent child processes to finish their calculations before finalizing metrics and exiting cleanly.
-
-### Step 3: Run and Verify
-Execute the parallel script natively from your terminal interface:
-
+## Running
 ```bash
 python3 main.py
 ```
-Watch the terminal outputs carefully. You will see all workers start almost simultaneously, calculating independent numbers concurrently rather than processing them one after another in a linear line.
 
+## Sample Output (Python 3.12.3, 8 logical CPUs)
+```text
+--- Multiprocessing Computational Engine Initialized ---
 
----
+[Process Worker-Core-1] Started heavy computation for number: 50000...
+[Process Worker-Core-2] Started heavy computation for number: 55000...
+--> Successfully launched 4 parallel worker processes. <--
+
+[Process Worker-Core-3] Started heavy computation for number: 60000...
+[Process Worker-Core-4] Started heavy computation for number: 65000...
+[Process Worker-Core-1] Finished in 1.2742 seconds.
+[Process Worker-Core-2] Finished in 1.5521 seconds.
+[Process Worker-Core-3] Finished in 1.9207 seconds.
+[Process Worker-Core-4] Finished in 2.3087 seconds.
+
+--- Parallel Computational Lifecycle Concluded ---
+Total processing block completion time: 2.3172 seconds.
+```
+Times depend on the machine and its load, and the order of the lines may change between runs. If you redirect the output to a file or a pipe (`python3 main.py | cat`), each child prints its "Started" and "Finished" lines together when it exits, because output is buffered when it is not going to a terminal.
+
+How much faster is it? Measured on an Intel i7-7700HQ (4 cores, 8 threads, `nproc` = 8) while other programs were also running:
+
+| Method | Total time |
+|--------|-----------|
+| Four calls one after another | 5.9–6.3 s |
+| Four threads (`threading.Thread`) | 6.7–7.0 s |
+| Four processes (this project) | 2.3–2.8 s |
+
+Processes are about 2.2–2.7 times faster here, not 4 times. Each process does a different amount of work, so the total time is set by the largest job (65000!), and starting processes has a small cost. Threads are no faster than the plain loop, which shows the effect of the GIL.
+
+## Resources
+- Blog post (Turkish): https://gurmezin.com/2026/09/10/pythonda-gil-duvarini-yikmak-multiprocessing-ile-gercek-paralellik/
+- `multiprocessing` documentation: https://docs.python.org/3/library/multiprocessing.html

@@ -1,50 +1,58 @@
-# Proje 33: Pytest ile Otomatik Birim Testi
+# Proje 33: pytest ile Birim Testi
 
-Üretim ortamına hazır bir test örneği olup, iş mantığını nasıl izole edeceğinizi ve `pytest` kullanarak otomatik test yürütme paketleri uygulayacağınızı göstermektedir. Bu proje, temel onaylamaları (assertions), uç durumları (edge cases) kontrol etmeyi ve beklenen istisna durumlarını doğrulamayı kapsar.
+`pytest` ile birim testi yazmaya küçük bir örnek. Test edilen kod ile testler ayrı dosyalardadır:
 
-## Mimari Hedef
-Uygulama, kod deposu içinde resmi bir test güdümlü katman oluşturur. Yürütme fonksiyonlarını test betiklerinden ayırarak, sürekli entegrasyon (CI) çalışanlarının veya pre-commit hook'larının gelen değişikliklerin yerleşik iş alanlarına regresyonlar sokmadığından emin olarak yürütme durumlarını otomatik olarak ayrıştırmasına olanak tanır.
+| Dosya | İçerik |
+|-------|--------|
+| `math_operations.py` | `divide_numbers()` payda sıfırsa `ValueError` fırlatır; `calculate_average()` boş liste için `0.0` döndürür |
+| `test_math_operations.py` | Beş test: normal sonuçlar, hata durumu ve uç durumlar (boş liste, tek elemanlı liste) |
+
+## Nasıl Çalışır?
+- pytest testleri adlarından bulur: `test_` ile başlayan dosyalar ve bu dosyalarda `test_` ile başlayan fonksiyonlar.
+- Testler düz `assert` ifadeleri kullanır; bir doğrulama başarısız olursa pytest karşılaştırılan değerleri gösterir.
+- `pytest.raises(ValueError)`, sıfıra bölmenin beklenen hatayı fırlattığını denetler. Test ayrıca hata mesajını da karşılaştırır (`str(exc_info.value)`).
+- `math_operations.py` içinde `if __name__ == "__main__":` bloğu yoktur; `python3` ile çalıştırırsanız hiçbir şey yazdırmaz. Proje pytest ile çalıştırılır.
 
 ## Proje Yapısı
 ```text
 33_unit_testing/
 ├── math_operations.py
-└── test_math_operations.py
-
-System Requirements
-- OS: Ubuntu 24.04 (or any Linux/UNIX-compatible system)
-- Runtime: Python 3.12+
-
-Setup & Dependencies
-Pytest is an external framework package that needs to be installed inside your virtual environment. Run the following command:
-
-```bash
+├── test_math_operations.py
+├── README.md
+└── README_TR.md
 ```
+
+## Gereksinimler
+- Python 3.10 veya üstü (pytest 9, 3.10+ ister; kodun kendisi 3.9 gerektiren `list[float]` kullanır). Python 3.12.3 ile test edildi.
+- Üçüncü taraf paket: `pytest`. pytest 9.1.1 ile test edildi.
+
+## Çalıştırma
+Komutları `33_unit_testing` klasörünün içinde çalıştırın:
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install pytest
-```
-
-Bu Projeyi Sıfırdan Nasıl Yeniden Oluşturulur
-Adım 1: Dizin Kurulumu
-Bu proje için özel bir klasör oluşturun:
-```bash
-mkdir 33_unit_testing
-cd 33_unit_testing
-
-### Step 2: Implement Core Functions and Test Suits
-1. Create the Target Module: Create a file named math_operations.py. Inside, implement core utility tasks like a division function (divide_numbers) that explicitly guards boundaries by raising a ValueError during division-by-zero attempts, and an array calculation function (calculate_average) that safely manages empty inputs.
-
-2. Create the Testing Module: Create a file named test_math_operations.py. Note: Pytest depends on naming conventions to automatically discover tests; your file name must start with test_ and your interior test functions must also start with the test_ prefix.
-
-3. Draft Target Verifications: Implement clear test blocks using plain Python assert statements.
-
-  - Write standard path evaluations (e.g., verifying divide_numbers(10, 2) == 5.0).
-
-  - Use the with pytest.raises(ValueError): context manager block to verify that your system components actively intercept and raise expected exceptions on forbidden input parameters.
-
-### Step 3: Run and Verify
-Instead of running Python directly on the script, invoke the pytest engine from your terminal inside the project directory:
-
-```bash
 pytest -v
+```
+`-v` (ayrıntılı) seçeneği her testi sonucuyla birlikte listeler.
 
--v (verbose) bayrağı, runner'a her test senaryosunu eşleşen doğrulama durumuyla birlikte listelemesini emreder ve temiz, yeşil bir geçiş özeti profili çıktısı verir.
+## Örnek Çıktı (Python 3.12.3)
+```text
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /path/to/.venv/bin/python3
+rootdir: /path/to/33_unit_testing
+collecting ... collected 5 items
+
+test_math_operations.py::test_divide_numbers_success PASSED              [ 20%]
+test_math_operations.py::test_divide_numbers_by_zero PASSED              [ 40%]
+test_math_operations.py::test_calculate_average_normal_list PASSED       [ 60%]
+test_math_operations.py::test_calculate_average_empty_list PASSED        [ 80%]
+test_math_operations.py::test_calculate_average_single_element PASSED    [100%]
+
+============================== 5 passed in 0.03s ===============================
+```
+Yollar ve çalışma süresi sizin makinenizde farklı olur. pytest proje klasöründe `.pytest_cache/` ve `__pycache__/` klasörleri oluşturur; bunları güvenle silebilirsiniz.
+
+## Kaynaklar
+- Blog yazısı: https://gurmezin.com/2026/09/05/pythonda-kodunuzu-kirilmaktan-koruyun-pytest-ile-birim-testi-yazmak/
+- pytest belgeleri: https://docs.pytest.org/

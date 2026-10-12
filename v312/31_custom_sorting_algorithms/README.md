@@ -1,43 +1,55 @@
 # Project 31: Custom Sorting Algorithms
 
-A theoretical implementation analyzing array ordering mechanics by building classical sorting algorithms from scratch. This project features Bubble Sort to demonstrate nested-loop array traversal and Merge Sort to illustrate recursive divide-and-conquer strategies.
+Two classic sorting algorithms written from scratch, without `sorted()` or `list.sort()`:
 
-## Architectural Goal
-The project bypasses Python's internal, highly optimized C-based `Timsort` (`.sort()`) engine to show how memory addresses, pointers, and array indices are shifted programmatically. It serves as a benchmark for comparing quadratic time execution ($O(n^2)$) with linearithmic time execution ($O(n \log n)$).
+| Function | Algorithm | Time complexity |
+|----------|-----------|-----------------|
+| `bubble_sort()` | Repeatedly swaps neighbouring elements that are out of order | O(n²), O(n) on an already sorted list |
+| `merge_sort()` | Splits the list in half recursively, then merges the sorted halves | O(n log n) |
+
+Both functions return a new list and leave the input list unchanged.
+
+## How It Works
+- **Bubble sort:** Works on a copy (`list(arr)`). After each pass the largest remaining element has moved to the end, so the inner loop gets one step shorter. If a pass makes no swap, the list is already sorted and the loop stops early.
+- **Merge sort:** A list with 0 or 1 elements is returned as is. Longer lists are split at `len(arr) // 2`, both halves are sorted recursively, and `_merge()` combines them by walking two indexes `i` and `j` through the halves and always taking the smaller element.
+- The demo sorts the same list (with a negative number, a zero and a duplicate `22`) with both functions and prints the original list at the end to show it was not changed.
+- This `merge_sort()` is **not stable**: `_merge()` uses `left[i] < right[j]`, so when two elements are equal the one from the right half is taken first. This makes no difference for plain integers, but records with equal keys can change order. `left[i] <= right[j]` would keep the original order.
 
 ## Project Structure
 ```text
 31_custom_sorting_algorithms/
-└── main.py
+├── main.py
+├── README.md
+└── README_TR.md
+```
 
-System Requirements
-OS: Ubuntu 24.04 (or any Linux/UNIX environment)
+## Requirements
+- Python 3.9 or newer (the `list[int]` annotations need 3.9). Tested on 3.12.3 and 3.10.
+- No third-party packages.
 
-Runtime: Python 3.12+
-
-Dependencies: None (Uses standard library built-ins)
-
-How to Recreate This Project From Scratch
-### Step 1: Directory Setup
-Set up an isolated directory for this project inside your repository workspace:
-
+## Running
 ```bash
-mkdir 31_custom_sorting_algorithms
-cd 31_custom_sorting_algorithms
+python3 main.py
+```
 
-### Step 2: Implement the Sorting Algorithms
-Create a file named main.py. Build your sorting routines step-by-step:
+## Sample Output (Python 3.12.3)
+```text
+--- Custom Sorting Engine Initialized ---
 
-Implement Bubble Sort: Write a function bubble_sort(arr). Create a shallow copy of the input list via list(arr) to keep the sorting operation pure and prevent unintended mutation of the original array reference. Use nested loops to compare adjacent elements and swap them if they are out of order. Add an optimization flag (swapped = False) to break out of the loop early if a pass completes without any changes, saving runtime on already sorted inputs.
+Original Unsorted Array : [64, 34, 25, 12, 22, 11, 90, -5, 0, 22]
+------------------------------------------------------------
+=== 1. Executing Bubble Sort O(n^2) ===
+Bubble Sorted Result    : [-5, 0, 11, 12, 22, 22, 25, 34, 64, 90]
+------------------------------------------------------------
 
-Implement Merge Sort: Write a recursive function merge_sort(arr). Establish a base case that returns the collection immediately if its length is 1 or less. For larger lists, find the midpoint using floor division (//) and split the array into two halves (arr[:mid] and arr[mid:]). Pass those slices back into merge_sort recursively.
+=== 2. Executing Merge Sort O(n log n) ===
+Merge Sorted Result     : [-5, 0, 11, 12, 22, 22, 25, 34, 64, 90]
+------------------------------------------------------------
 
-Build the Merge Combiner Utility: Create a private helper function _merge(left, right). Use two index pointer variables initialized to zero (i = j = 0) to step through both sorted lists simultaneously. Compare elements at the current pointers, append the lower value to a new results array, and advance that pointer. Use .extend() to append any remaining elements once one of the lists is exhausted.
+Verification (Original remains safe): [64, 34, 25, 12, 22, 11, 90, -5, 0, 22]
+```
+The script does not measure time. On a test machine, sorting 3,000 random integers took about 1.5 s with `bubble_sort()` and about 0.02 s with `merge_sort()`; your figures will differ.
 
-### Step 3: Run and Verify
-Add an evaluation block at the bottom of the script using an unsorted list containing arbitrary numbers (including negative values, zeroes, and duplicate entries). Execute the file from the terminal to verify that both algorithms return perfectly sorted lists:
-
-```bash
-python main.py
-
-
+## Resources
+- Blog post (Turkish): https://gurmezin.com/2026/08/28/python-ile-siralama-algoritmalari-bubble-sort-ve-merge-sort-karsilastirmasi/
+- Python Sorting Techniques: https://docs.python.org/3/howto/sorting.html

@@ -1,44 +1,80 @@
-# Proje 29: Gelişmiş SQLite Veritabanı Yönetimi
+# Proje 29: İşlem Bağlam Yöneticisiyle SQLite CRUD
 
-Python'ın yerel `sqlite3` sürücüsünü kullanarak sağlam ilişkisel veritabanı etkileşimlerini gösteren, üretim düzeyinde bir örnek projedir. Bu uygulama, özel işlem bağlam yönetimi, açık varlık kısıtlamaları, sözlük benzeri kayıt kod çözme ve parametrelendirme yoluyla katı SQL Injection önlemlerini kapsar.
+Standart `sqlite3` modülüyle yazılmış küçük bir stok örneği. Şunları gösterir:
+- bağlantıyı açan, başarılı olursa commit eden, hata çıkarsa rollback yapan ve bağlantıyı her durumda kapatan bir `@contextmanager`,
+- sütunlara isimle erişebilmeniz için (`row['sku']`) `row_factory` olarak `sqlite3.Row`,
+- her değer için parametreli sorgular (`?` yer tutucuları); böylece kullanıcı girdisi SQL metnine karışmaz ve SQL enjeksiyonu önlenir,
+- `sku` sütununda yinelenen bir kaydı `sqlite3.IntegrityError` hatasına dönüştüren `UNIQUE` kısıtı.
 
-## Mimari Hedef
-Uygulama, yerel dosya depolama veya hızlı bellekteki geçici önbellekler için uyarlanmış, dayanıklı, thread-safe bir kalıcılık yönetimi modülü sağlar. Veritabanı bağlantı iş akışlarını otomatikleştirir; işlemler başarı durumunda otomatik olarak commit edilir ve operasyonel anormallikler veya bütünlük kısıtlaması hataları oluştuğunda temiz bir şekilde rollback yapılır.
+## Nasıl Çalışır?
+- `DatabaseManager.connection()` her `with` bloğu için **yeni** bir bağlantı açar. Demonun bir dosya (`inventory.db`) kullanmasının nedeni budur: `":memory:"` verilirse her blok kendi boş veritabanını alır ve ikinci blok `no such table: inventory_items` hatasıyla durur.
+- `initialize_database()`, `inventory_items` tablosunu (`id`, `sku`, `name`, `quantity`, `price`) oluşturur.
+- `create_item()`, `read_all_items()`, `update_item_stock()` ve `delete_item()` her biri kendi `with db.connection()` bloğunda tek bir komut çalıştırır. `create_item()`, `IntegrityError` hatasını yakalar ve `False` döndürür.
+- Betik `inventory.db` dosyasını başta ve sonda siler; normal bir çalıştırmadan sonra geride dosya kalmaz. Hatayla durursa `inventory.db` geçerli klasörde kalır.
+
+Yöneticinin iş parçacığı (thread) güvenliği için özel bir önlemi yoktur; yalnızca her blok için ayrı bir bağlantı açar.
 
 ## Proje Yapısı
 ```text
 29_sqlite_advanced/
-└── main.py
+├── main.py
+├── README.md
+└── README_TR.md
+```
 
-System Requirements
-OS: Ubuntu 24.04 (or any Linux/UNIX-compatible system)
+## Gereksinimler
+- Python 3.9 veya üstü (`list[sqlite3.Row]` tip ipucu 3.9 gerektirir). Python 3.12.3 ve SQLite 3.45.1 (Ubuntu 24.04) ile, ayrıca `python:3.12-slim` Docker imajında (Python 3.12.15, SQLite 3.46.1) test edildi; çıktı aynıydı.
+- Üçüncü taraf paket gerekmez.
 
-Runtime: Python 3.12+
-
-Dependencies: None (Uses standard library built-ins)
-
-How to Recreate This Project From Scratch
-### Step 1: Directory Setup
-Set up an isolated directory for this specific project inside your repository workspace:
-
+## Çalıştırma
 ```bash
-mkdir 29_sqlite_advanced
-cd 29_sqlite_advanced
+python3 main.py
+```
+Betik geçerli klasörde `inventory.db` dosyasını oluşturur ve sonra siler.
 
-### Adım 2: Kalıcılık Katmanını Oluşturma
-`main.py` adında bir dosya oluşturun. İlişkisel sarmalayıcı sisteminizi adım adım inşa edin:
+## Örnek Çıktı (Python 3.12.3)
+```text
+--- Advanced SQLite Transaction Engine Started ---
 
-Bir Bağlantı Context Utility'si Oluşturma: Veritabanı yaşam döngülerini güvenli bir şekilde yönetmek için `contextlib` kütüphanesindeki `@contextmanager` özelliğinden yararlanın. Jeneratör context bloğunuzun içinde, `sqlite3.connect()` kullanarak bağlantılar kurun. Düz indeks demetlerini okunabilir, sözlük benzeri anahtar eşleme örneklerine dönüştürmek için `conn.row_factory = sqlite3.Row` olarak ayarlayın.
+Database schema tables initialized successfully.
+-------------------------------------------------------
+=== 1. Populating Data (Create) ===
+[Database Error] Transaction aborted & rolled back: UNIQUE constraint failed: inventory_items.sku
+[Warning] Failed to insert: SKU 'SKU-MECH-01' already exists.
+-------------------------------------------------------
 
-İşlemleri ve Hataları Yönetme: Yöneticinin içine açık bir `try/except/finally` dizisi uygulayın. Veritabanı bağlantılarını işlemlerinize iletmek için bir `yield` ifadesi kullanın. İşlemler başarıyla çalışırsa, `conn.commit()` çağırın. Bir istisna oluşursa, onu yakalayın ve veritabanı bütünlüğünü korumak için `finally` bloğunda bağlantıları kapatmadan önce zorla bir `conn.rollback()` yapın.
+=== 2. Fetching Catalog Inventory (Read) ===
+Item #1 | SKU: SKU-MECH-01 | Mechanical Keyboard | Stock: 45 | Price: $89.99
+Item #2 | SKU: SKU-MOUS-02 | Ergonomic Wireless Mouse | Stock: 120 | Price: $49.50
+-------------------------------------------------------
 
-Temel Veritabanı Şemasını Tasarlama: Otomatik artan birincil anahtarlar, benzersiz SKU etiketleri, stringler, tamsayı sayımları ve hassasiyet float alanları içeren temel bir referans tablo oluşturan bir başlatma fonksiyonu tanımlayın (örneğin, `initialize_database(db)`).
+=== 3. Adjusting Asset Configurations (Update) ===
+Stock updated successfully for item 'SKU-MECH-01'.
+-------------------------------------------------------
 
-Güvenli Parametreli CRUD Bloklarını Uygulama: Özel veri hattı metotları oluşturun (`create_item`, `read_all_items`, `update_item_stock`, `delete_item`). Ham değişkenleri asla SQL satırlarına string-interpolate etmeyin. Bunun yerine, yer tutucu semboller (?) kullanarak temiz sorgu ifadeleri iletin ve değişkenlerinizi eşleşen argüman demetleri içinde iletin. Bu, veritabanı motorunun girdi verilerini güvenli bir şekilde kaçırmasını (escape) ve kötü amaçlı SQL enjeksiyon dizilerini engellemesini sağlar.
+=== 4. Deleting Records (Delete) ===
+Item 'SKU-MOUS-02' removed from the active database system.
+-------------------------------------------------------
 
-### Adım 3: Çalıştırma ve Doğrulama
-Yürütme bloğunuzun içine (if `__name__ == "__main__":`) hızlı bir deneme çalıştırması yapılandırın. Özel dosya adı ":memory:" kullanarak bellekte bir veritabanı başlatın, oluşturma prosedürlerini çağırın, kayıt varyasyonlarını tetikleyin, kısıtlama limitlerini yakalayın ve sonuçları konsola kaydedin. Betiği çalıştırın:
-```bash
-python main.py
+=== Final Active Database State ===
+Remaining -> Mechanical Keyboard | Current Stock: 50
+```
 
+## Not: Rollback ve Türkçe Yerel Ayar
+Python'un `sqlite3` modülü varsayılan (eski, "legacy") işlem modunda `INSERT`, `UPDATE`, `DELETE` ve `REPLACE` komutlarından önce örtük olarak bir işlem (transaction) başlatır. Python 3.12'ye kadar bu anahtar kelimeleri, yerel ayara bağlı C düzeyinde bir büyük/küçük harf duyarsız karşılaştırmayla tanır. Türkçe yerel ayarda (`LC_CTYPE=tr_TR.UTF-8`) `I` harfi küçültülünce `i` olmaz; bu yüzden `INSERT` diye yazılmış bir komut tanınmaz: işlem açılmaz, satır hemen kalıcı olarak yazılır ve sonraki `rollback()` bunu geri alamaz. Küçük harfle yazılmış `insert`, `UPDATE` ve `DELETE` etkilenmez.
 
+Demo bundan etkilenmez, çünkü her blok tek bir komut çalıştırır. Aynı `with db.connection()` bloğuna iki komut koyduğunuzda fark ortaya çıkar. Aynı blokta önce yeni bir satır, sonra yinelenen bir SKU ekleyen bir test şu sonuçları verdi:
+
+| Ortam | `INSERT` sonrası `in_transaction` | Başarısız bloktan sonra satır sayısı |
+|-------|-----------------------------------|--------------------------------------|
+| Python 3.12.3, `LC_CTYPE=tr_TR.UTF-8` | `False` | 2 (ekranda `rolled back` yazmasına rağmen ilk kayıt kaldı) |
+| Python 3.12.3, `LC_ALL=C.UTF-8` | `True` | 1 (geri alındı) |
+| Docker Python 3.12.15, `tr_TR.UTF-8` | `False` | 2 |
+| Docker Python 3.13.16, `tr_TR.UTF-8` | `True` | 1 (geri alındı) |
+
+Python 3.12'de çözüm: bağlantıyı `sqlite3.connect(..., autocommit=False)` ile açın (3.12'de geldi; her zaman açık bir işlem vardır ve `commit()`/`rollback()` beklendiği gibi çalışır), işlemi `conn.execute("BEGIN")` ile kendiniz başlatın ya da programı Türkçe olmayan bir `LC_CTYPE` ile çalıştırın. Python 3.13'te bu sorun yoktur.
+
+## Kaynaklar
+- Blog yazısı: https://gurmezin.com/2026/08/25/python-ve-sqlite-guvenli-ve-profesyonel-veritabani-yonetimi/
+- `sqlite3` belgeleri: https://docs.python.org/3/library/sqlite3.html
+- `sqlite3` ile işlem denetimi: https://docs.python.org/3/library/sqlite3.html#sqlite3-controlling-transactions

@@ -1,64 +1,76 @@
 # Project 30: FastAPI Basics
 
-A foundational microservice web framework example demonstrating how to build high-performance, asynchronous REST APIs using FastAPI and Pydantic. This implementation covers type validation schemas, path/query parameter handling, status codes, and exception management.
+A small REST API built with FastAPI. It keeps an inventory of items in a Python dictionary (in memory) and shows the core FastAPI features on four endpoints:
 
-## Architectural Goal
-The application shifts from traditional synchronous paradigms (like standard Flask routing) into a modern ASGI-driven architecture. By leveraging `async/await` non-blocking operations alongside Pydantic data modeling layers, it ensures that runtime traffic payloads are validated instantly before reaching core application domains.
+| Endpoint | What it shows |
+|----------|---------------|
+| `GET /` | A simple status message |
+| `GET /items?limit=10&skip=0` | Query parameters with default values (pagination) |
+| `GET /items/{item_id}` | A typed path parameter and a `404` error with `HTTPException` |
+| `POST /items` | Request body validation with a Pydantic model, `201` and `400` status codes |
+
+## How It Works
+- `ItemSchema` is a Pydantic model. `sku` must be at least 3 characters, `name` at least 1 character and `price` greater than 0. FastAPI checks the request body against it before the function runs and answers invalid requests with `422` automatically.
+- `item_id: int` in the path is converted to an integer. A value like `abc` is rejected with `422`.
+- `POST /items` rejects a duplicate `sku` with `400`. New items get the next integer ID (`max + 1`).
+- The data lives in the `INVENTORY_DB` dictionary, so everything you add is lost when the server restarts.
+- `limit` and `skip` are not validated. Negative values fall through to Python list slicing: `/items?limit=-1` returns every item except the last one.
+- FastAPI generates interactive documentation at `/docs` (Swagger UI) and `/redoc`.
 
 ## Project Structure
 ```text
 30_fastapi_basics/
-└── main.py
+├── main.py
+├── README.md
+└── README_TR.md
+```
 
-System Requirements
-OS: Ubuntu 24.04 (or any Linux/UNIX-compatible system)
+## Requirements
+- Python 3.10 or newer (current FastAPI, Pydantic and Uvicorn releases require 3.10+; the code itself uses no newer syntax). Tested on 3.12.3.
+- Third-party packages: `fastapi` and `uvicorn` (`pydantic` is installed together with FastAPI). Tested with fastapi 0.143.0, pydantic 2.14.1, uvicorn 0.54.0.
 
-Runtime: Python 3.12+
-
-Setup & Dependencies
-Unlike previous standard library examples, FastAPI requires an external routing framework engine and an ASGI web server runner (uvicorn). Pip install them directly into your virtual environment:
-
+## Running
 ```bash
-pip install fastapi uvicorn pydantic
+python3 -m venv .venv
+source .venv/bin/activate
+pip install fastapi uvicorn
+python3 main.py
+```
+The server starts on `http://127.0.0.1:8000` with auto-reload enabled. Stop it with `Ctrl+C`.
 
-How to Recreate This Project From Scratch
-### Step 1: Directory Setup
-Set up an isolated directory for this project inside your repository workspace:
+In a second terminal you can call the endpoints with `curl`, or open `http://127.0.0.1:8000/docs` in your browser.
 
+## Sample Output (Python 3.12.3)
+Server terminal:
+```text
+INFO:     Will watch for changes in these directories: ['/path/to/30_fastapi_basics']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [435840] using StatReload
+Launching API Web Server locally...
+INFO:     Started server process [435849]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+```
+
+Requests and their responses (the HTTP status code is added in parentheses where it is not `200`):
 ```bash
-mkdir 30_fastapi_basics
-cd 30_fastapi_basics
+curl http://127.0.0.1:8000/
+curl "http://127.0.0.1:8000/items?limit=1&skip=1"
+curl http://127.0.0.1:8000/items/99
+curl -X POST http://127.0.0.1:8000/items -H "Content-Type: application/json" \
+     -d '{"sku":"SKU-MON-03","name":"27-inch Monitor","price":199.9}'
+curl -X POST http://127.0.0.1:8000/items -H "Content-Type: application/json" \
+     -d '{"sku":"AB","name":"","price":0}'
+```
+```text
+{"status":"online","message":"Welcome to the FastAPI Inventory System"}
+[{"id":2,"sku":"SKU-MOUS-02","name":"Ergonomic Wireless Mouse","price":49.5}]
+{"detail":"Item with ID 99 does not exist."}                                   (HTTP 404)
+{"id":3,"sku":"SKU-MON-03","name":"27-inch Monitor","price":199.9}             (HTTP 201)
+{"detail":[{"type":"string_too_short","loc":["body","sku"],"msg":"String should have at least 3 characters","input":"AB","ctx":{"min_length":3}},{"type":"string_too_short","loc":["body","name"],"msg":"String should have at least 1 character","input":"","ctx":{"min_length":1}},{"type":"greater_than","loc":["body","price"],"msg":"Input should be greater than 0","input":0,"ctx":{"gt":0.0}}]}   (HTTP 422)
+```
+Sending the same `SKU-MON-03` item again returns `{"detail":"An item with SKU 'SKU-MON-03' already exists."}` with status `400`. Process IDs and paths differ on your machine.
 
-### Step 2: Formulate the Web Service
-Create a file named main.py. Build your API structure step-by-step:
-
-Instantiate the Core Application Instance: Import FastAPI and create an instance variable (e.g., app = FastAPI()). You can optionally pass metadata like title, description, and version to customize the automated openAPI documentation context.
-
-Design Data Validation Schemas: Define your input constraints by inheriting from Pydantic's BaseModel. Use field attributes (Field(...)) to mandate basic requirements, string length boundaries, or positive math validations (e.g., enforcing that price values stay strictly greater than zero via gt=0.0).
-
-Draft Non-Blocking Asynchronous Routes: Implement standard REST verb decorators over asynchronous target routines (async def).
-
-Use plain routing paths for broad actions (e.g., @app.get("/items")).
-
-Use bracket formatting tokens for explicit inline routing parameters (e.g., @app.get("/items/{item_id}")), capturing variables natively as strongly typed function inputs.
-
-Map parameter variables directly inside function declarations (e.g., limit: int = 10) to handle query parameters and pagination effortlessly.
-
-Enforce Error Boundaries: Guard edge cases by raising instances of HTTPException alongside valid status components imported directly from fastapi.status.
-
-### Step 3: Run and Verify
-Add a driver block to launch your application using uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True). Run the server script from your terminal:
-
-```bash
-python main.py
-
-Open your browser and navigate to the following interactive endpoints:
-
-API Status Check: http://127.0.0.1:8000/
-
-Interactive Swagger Documentation: http://127.0.0.1:8000/docs
-
-Alternative ReDoc UI: http://127.0.0.1:8000/redoc
-
-
-
+## Resources
+- Blog post (Turkish): https://gurmezin.com/2026/08/26/fastapi-ile-tanisin-modern-hizli-ve-tip-guvenli-apiler-gelistirmek/
+- FastAPI documentation: https://fastapi.tiangolo.com/

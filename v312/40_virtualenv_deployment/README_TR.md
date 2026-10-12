@@ -1,69 +1,70 @@
-# Proje 40: Üretim Ortamı İzolasyonu ve Dağıtımı
+# Proje 40: Dağıtım Öncesi Sanal Ortam Kontrolü
 
-Modern üretim sunucuları için güvenli, izole sanal ortamların (`virtualenv`) nasıl oluşturulacağını, kilitleneceğini, doğrulanacağını ve dağıtılacağını gösteren son kilometre taşı projesi. Bu kurulum, küresel bağımlılık kirliliğini önlemek için gerçek dünya otomatik dağıtım (CI/CD) boru hatlarını modellemektedir.
+Küçük bir dağıtım öncesi sağlık kontrolü. `main.py`, bir sanal ortamın (`venv`) içinde çalışmıyorsa ya da ihtiyaç duyduğu üçüncü taraf paket (`requests`) kurulu değilse çalışmayı reddeder. Bir servisin yanlışlıkla sistemin genel Python kurulumuyla çalışmasını önlemek için dağıtım hattının (pipeline) başına konacak türden bir kontroldür.
 
-## Mimari Hedef
-Sistem, kurumsal düzeyde dağıtımlar için mutlak sınır kısıtlamasını oluşturur. Çalışma zamanı gereksinimlerini (runtime requirements) deterministik yapısal kilitlere (`requirements.txt`) dönüştürerek ve ana orkestrasyon katmanlarına titiz sağlık kontrol döngüleri gömerek, eksik dosyalardan kaynaklanan küresel ana makine paket kontaminasyonu veya bozuk üretim boru hatları riskini tamamen azaltır.
+## Nasıl Çalışır?
+- **İzolasyon kontrolü:** Sanal ortamın içinde `sys.prefix` ortamın klasörünü, `sys.base_prefix` ise temel Python kurulumunu gösterir. İkisi eşitse betik genel ortamda çalışıyor demektir ve `1` çıkış koduyla sonlanır.
+- **Bağımlılık kontrolü:** Betik `import requests` satırını dener. İçe aktarma başarısız olursa `1` çıkış koduyla sonlanır ve gereksinimleri kurmanızı ister.
+- İki kontrol de geçilirse başarı mesajı yazar ve `0` çıkış koduyla sonlanır. Böylece bir CI/CD adımı çıkış koduna güvenebilir.
 
 ## Proje Yapısı
 ```text
 40_virtualenv_deployment/
 ├── main.py
-└── requirements.txt
-System Requirements
-OS: Ubuntu 24.04 (or any Linux/UNIX host environment)
+├── README.md
+└── README_TR.md
+```
+`requirements.txt` projeye dahil değildir. Aşağıdaki 2. adımda siz oluşturursunuz.
 
-Runtime: Python 3.12+
+## Gereksinimler
+- Python 3.12+ (yerleşik `venv` modülü olan her Python 3 sürümü çalışır)
+- Ubuntu 24.04 veya herhangi bir Linux/macOS sistemi. Windows'ta `source .venv/bin/activate` yerine `.venv\Scripts\activate` kullanın.
+- Ubuntu'da `venv` için sistem paketi gerekebilir: `sudo apt install python3-venv`
 
-Core Tool: Python native venv standard module
+## Çalıştırma
 
-How to Recreate This Project From Scratch
-Step 1: Directory Setup
-Create a dedicated project directory structure within your workspace repository:
-
-Bash
-mkdir 40_virtualenv_deployment
-cd 40_virtualenv_deployment
-Step 2: Formulate the Manifest and Deployment Target
-Create the Script Target: Create a file named main.py. Build a defensive guard routine that actively compares sys.prefix with sys.base_prefix to determine environmental isolation dynamically on the fly.
-
-Draft the Manifest Dependency Sheet: Create a file named requirements.txt. Specify your exact pinning definitions for downstream deployment routines:
-
-Plaintext
-requests==2.31.0
-Step 3: Run and Verify the Deployment Simulation
-Follow this multi-step terminal verification sequence to simulate a live production delivery setup on your Ubuntu host:
-
-Verify Fallback Safeguards (Running Globally):
-Run the file directly via your global system command lines:
-
-Bash
+**1. Genel ortamda çalıştırın (başarısız olması beklenir):**
+```bash
 python3 main.py
-The engine immediately catches that no virtual environment layer bounds the execution memory address space and triggers a calculated sys.exit(1) block to protect your production lines from failure.
+```
+```text
+--- Running Production Deployment Sanity Monitor ---
+ -> Isolation Layer Status   : INACTIVE (GLOBAL)
+ -> Python Interpreter Path   : /usr/bin/python3
+ -> Python Core Version       : 3.12.3
+ -> Third-Party Requirements : RESOLVED
+-------------------------------------------------------
+[Critical Danger] Application is running globally! Aborting pipeline to prevent host pollution.
+```
 
-Spin Up an Isolated Production Virtualenv:
-Construct a local, hidden standalone execution container directory:
-
-Bash
+**2. Sanal ortamı ve gereksinim dosyasını oluşturun:**
+```bash
 python3 -m venv .venv
-Activate the Layer Context:
-Inject the freshly mapped environment paths directly into your current shell thread session:
-
-Bash
-source .venv/bin/init  # or source .venv/bin/activate
-(Your terminal prompt will change to show a (.venv) prefix header)
-
-Synchronize Packages via Lock Manifest:
-Install all pinned production-grade dependencies securely into the active sub-context shell:
-
-Bash
+source .venv/bin/activate
+echo "requests==2.32.3" > requirements.txt
 pip install --upgrade pip
 pip install -r requirements.txt
-Execute Final Release Verification Pass:
-With your .venv context actively bound, execute your master sanity manager:
+```
+Komut satırınız artık `(.venv)` ile başlar. Sürümü tam olarak sabitlemek (`==`) her dağıtımda aynı paketin kurulmasını sağlar.
 
-Bash
+**3. Sanal ortamın içinde çalıştırın (başarılı olması beklenir):**
+```bash
 python3 main.py
-The application logic will confirm isolation layer activation, ensure all tracking variables are explicitly resolved, and declare the server state SUCCESS for target data traffic!
+```
+```text
+--- Running Production Deployment Sanity Monitor ---
+ -> Isolation Layer Status   : ACTIVE (.venv)
+ -> Python Interpreter Path   : /path/to/40_virtualenv_deployment/.venv/bin/python3
+ -> Python Core Version       : 3.12.3
+ -> Third-Party Requirements : RESOLVED
+-------------------------------------------------------
+[SUCCESS] Environment sanity check passed. The container/host is safe for heavy web routing operations.
+```
 
----
+`pip install -r requirements.txt` adımını atlarsanız betik etkin ortamı tanır, ancak gereksinimler için `UNRESOLVED (CRITICAL)` yazar ve `1` çıkış koduyla sonlanır.
+
+İşiniz bittiğinde `deactivate` komutuyla ortamdan çıkabilirsiniz.
+
+## Kaynaklar
+- Blog yazısı: https://gurmezin.com/2026/09/28/pythonda-sanal-ortam-kontrolu-uretime-cikmadan-once-son-guvenlik-adimi/
+- `venv` belgeleri: https://docs.python.org/3/library/venv.html

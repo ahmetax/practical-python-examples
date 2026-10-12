@@ -1,43 +1,82 @@
-# Project 38: Text Pattern Recognition and Validation with Regex
+# Project 38: Validating Email, Phone and Password Input with Regex
 
-A comprehensive data compliance and text extraction utility engineered using Python's native regular expressions (`re`) engine. This project covers complex pattern matching, input sanitation, group token mining, and multi-layered credential security enforcement.
+Three small validators built with the standard `re` module, each run against a handful of sample inputs:
 
-## Architectural Goal
-The system establishes a deterministic boundary guard layer for processing raw inputs. By verifying structure formats (such as formal emails, region-specific telecom routing channels, or algorithmic passkeys) at the application entrance, it prevents corrupted strings from reaching core service layers or polluting data persistence storage layers.
+| # | Validator | Technique |
+|---|-----------|-----------|
+| 1 | Email address format | One anchored pattern with `re.match()` |
+| 2 | Turkish mobile phone number, split into parts | Optional prefix `(?:\+90\|0)?`, capture groups and `match.groups()` |
+| 3 | Password strength, listing every failed rule | Separate `re.search()` checks plus a length check |
+
+## How It Works
+- **Email:** `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$` requires a local part, an `@`, a domain and a top-level domain of at least two letters.
+- **Phone:** `^(?:\+90|0)?\s?([5]\d{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$` accepts an optional `+90` or `0` prefix and optional single spaces between the blocks. The number must start with `5`, so only mobile numbers pass; a landline such as `0212 123 45 67` is rejected. The four capture groups are printed in a normalized form. The first group (labelled `Area` in the output) is really the mobile operator prefix.
+- **Password:** five independent checks: at least 8 characters, an uppercase letter `[A-Z]`, a lowercase letter `[a-z]`, a digit `\d` and one of the special characters `@$!%*?&`. Every failed check is collected in a list, so the user sees all problems at once instead of one at a time.
+
+## Limitations
+These patterns are meant for teaching and are looser or stricter than they look:
+- `$` also matches just before a trailing newline, so `"a@x.com\n"` is accepted as a valid email. `re.fullmatch()` or `\Z` would close this gap.
+- The email pattern also accepts addresses such as `a..b@x.com`, `.a@x.com` and `a@x..com`, and rejects non-ASCII domains such as `user@örnek.com`.
+- `[A-Z]` only covers ASCII letters, so the password `Şifre123!x` is reported as having no uppercase letter.
+- Special characters outside `@$!%*?&` do not count: `Passw0rd#` is rejected.
+- In Python, `\d` matches any Unicode digit, so `5٥٥١٢٣٤٥٦٧` (Arabic-Indic digits) passes as a phone number. Use `[0-9]` or the `re.ASCII` flag to allow only 0–9.
 
 ## Project Structure
 ```text
 38_regex_validation/
-└── main.py
-System Requirements
-OS: Ubuntu 24.04 (or any Linux/UNIX-compatible system)
+├── main.py
+├── README.md
+└── README_TR.md
+```
 
-Runtime: Python 3.12+
+## Requirements
+- Python 3.9 or newer (the `list[str]` return annotation). Tested on 3.12.3.
+- No third-party packages.
 
-Dependencies: None (Uses standard library built-ins)
-
-How to Recreate This Project From Scratch
-Step 1: Directory Setup
-Create a dedicated project folder structure within your workspace repository:
-
-Bash
-mkdir 38_regex_validation
-cd 38_regex_validation
-Step 2: Implement Regex Rule Definitions
-Create a file named main.py. Build your pattern constraints step-by-step using Python's standard re module:
-
-Design an Email Structure Mask: Use anchors (^ for line start, $ for line end) to prevent partial matching. Use character sets ([a-zA-Z0-9._%+-]+) to match allowed email headers, require a literal @ symbol, map domain segments, and mandate a suffix TLD via \.[a-zA-Z]{2,}. Match inputs against this blueprint using re.match().
-
-Design a Telecom Extractor Pattern: Build a flexible pattern using optional non-capturing prefix tokens (?:\+90|0)? alongside conditional spaces \s?. Use structural grouping parentheses () around digits (\d) to isolate Area Codes from local sub-blocks. Access these isolated strings via .groups() to achieve runtime text normalization.
-
-Design Sequential Security Scanners: Instead of one monolithic regex rule, map separate scanning steps using re.search(). Check the string for individual character classes sequentially: [A-Z] for uppercase, [a-z] for lowercase, \d for numeric units, and [@$!%*?&] for cryptographic special flag parameters. Collect failing conditions into an errors array.
-
-Step 3: Run and Verify
-Execute your test matrix suite directly via your terminal prompt:
-
-Bash
+## Running
+```bash
 python3 main.py
-Examine the terminal feedback meticulously. Verify that valid emails pass securely, phone variations normalize correctly into standard segments, and weak passwords explicitly list all broken criteria rules before rejection.
+```
 
+## Sample Output (Python 3.12.3)
+```text
+--- Advanced Regular Expression Engine Initialized ---
 
----
+=== 1. Email Pattern Ingestion ===
+ -> Address [ahmet.aksoy@example.com]: VALID
+ -> Address [invalid-email@domain]: INVALID
+ -> Address [@missing-user.com]: INVALID
+ -> Address [user@com]: INVALID
+-----------------------------------------------------------------
+
+=== 2. Phone Layout Mining & Normalization ===
+ -> Parsing [+905551234567]:
+   [Sanitized Output] Extracted -> Area: (555) Number: 123-45-67
+ -> Parsing [0532 987 65 43]:
+   [Sanitized Output] Extracted -> Area: (532) Number: 987-65-43
+ -> Parsing [4440333]:
+   [Result] Format Violation Detected.
+ -> Parsing [5051112233]:
+   [Sanitized Output] Extracted -> Area: (505) Number: 111-22-33
+-----------------------------------------------------------------
+
+=== 3. Password Security Assertions ===
+ -> Password [12345]: WEAK / REJECTED
+    x Fail Reason: Minimum length must be at least 8 characters.
+    x Fail Reason: Must contain at least one uppercase letter [A-Z].
+    x Fail Reason: Must contain at least one lowercase letter [a-z].
+    x Fail Reason: Must contain at least one special character [@$!%*?&].
+ -> Password [SecurePass123!]: STRONG / APPROVED
+ -> Password [onlylowercase]: WEAK / REJECTED
+    x Fail Reason: Must contain at least one uppercase letter [A-Z].
+    x Fail Reason: Must contain at least one numerical digit [0-9].
+    x Fail Reason: Must contain at least one special character [@$!%*?&].
+ -> Password [UPPERCASE123]: WEAK / REJECTED
+    x Fail Reason: Must contain at least one lowercase letter [a-z].
+    x Fail Reason: Must contain at least one special character [@$!%*?&].
+-----------------------------------------------------------------
+```
+
+## Further Reading
+- Blog post (Turkish): https://gurmezin.com/2026/09/21/pythonda-regex-sinir-bekciligi-e-posta-telefon-ve-sifre-dogrulama/
+- `re` documentation: https://docs.python.org/3/library/re.html

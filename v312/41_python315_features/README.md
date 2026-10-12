@@ -1,6 +1,6 @@
 # Project 41: Python 3.15 Feature Tour
 
-A runnable walkthrough of the headline features in Python 3.15 (final release scheduled for 9 October 2026).
+A runnable walkthrough of the headline features in Python 3.15. Tested on the release candidates 3.15.0rc2 and 3.15.0rc3.
 
 | # | Feature | PEP |
 |---|---------|-----|
@@ -20,7 +20,7 @@ A runnable walkthrough of the headline features in Python 3.15 (final release sc
 
 ## Requirements
 - Python 3.15 (3.15.0rc2 or newer). No third-party packages.
-- The script exits with a message on older interpreters.
+- Older interpreters cannot run it at all. The comprehension unpacking syntax (PEP 798) is rejected at compile time with `SyntaxError: iterable unpacking cannot be used in comprehension`, so the version check at the top of `main.py` never gets a chance to print its message.
 
 ## Running
 
@@ -44,4 +44,5 @@ lazy imports  :   20.7 ms  (7.9x faster startup)
 Timings depend on the machine; the ratio is what matters.
 
 ## Further Reading
+- Blog post (Turkish): https://gurmezin.com/2026/10/05/python-3-15-geliyor-lazy-import-frozendict-varsayilan-utf-8/
 - What's New in Python 3.15: https://docs.python.org/3.15/whatsnew/3.15.html

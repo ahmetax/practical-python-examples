@@ -1,39 +1,50 @@
 # Proje 36: Asyncio Temelleri
 
-Python'ın standart `asyncio` çatısını kullanarak tek iş parçacıklı, engellemeyen (non-blocking) eşzamanlılığı gösteren bir ağ simülasyon projesi. Bu mimari, modern `async/await` paradigmasının yüksek performanslı I/O-bound iş akışlarını nasıl yapılandırdığını sergiliyor.
+Girdi/çıktı (I/O) beklemesi içeren işleri standart `asyncio` modülüyle eşzamanlı çalıştırmayı gösteren kısa bir örnek. 3, 2 ve 1 saniye süren üç sahte ağ isteği, tek bir iş parçacığında, toplam 6 saniye yerine yaklaşık 3 saniyede biter. Gerçek bir ağ bağlantısı kurulmaz; bekleme süresini `asyncio.sleep()` taklit eder.
 
-## Mimari Hedef
-Uygulama, senkron sistemlerde tipik olan boş iş parçacığı bekleme sürelerini ortadan kaldırır. Uzak API'ler çekilirken, yavaş kalıcılık (persistence) veritabanlarına erişilirken veya devasa disk segmentleri okunurken, geleneksel betikler işlem hatlarını kilitler. Bu servis, bekleme aralıkları sırasında kontrolü merkezi bir koordinasyonlu Event Loop'a geri bırakarak, tek bir işlemci çekirdeğinin binlerce açık soketi aynı anda işlemesine olanak tanır.
+## Nasıl Çalışır?
+- `simulate_network_fetch(server_name, delay_seconds)` bir eşyordamdır (coroutine, `async def`). Bir mesaj yazdırır, `await asyncio.sleep(delay_seconds)` ile bekler, sonra bir sözlük döndürür.
+- Bir eşyordam `await` noktasında beklerken olay döngüsü (event loop) diğer görevleri çalıştırır. Engelleyen `time.sleep()` ise bütün programı durdururdu.
+- `main()`, üç eşyordamı `asyncio.create_task()` ile göreve dönüştürür. Görevler bu noktada yalnızca zamanlanır; `main()` ilk `await` satırına geldiğinde çalışmaya başlarlar. Bu yüzden "All network tasks scheduled" satırı, "Initiating connection" satırlarından önce yazdırılır.
+- `await asyncio.gather(task1, task2, task3)` üç görevin de bitmesini bekler. En kısa görev (1 sn) önce biter, ama `gather` sonuçları bitiş sırasına göre değil, görevlerin verildiği sıraya göre döndürür.
+- `asyncio.run(main())` olay döngüsünü oluşturur, `main()`i çalıştırır ve döngüyü kapatır.
 
 ## Proje Yapısı
 ```text
 36_asyncio_basics/
-└── main.py
+├── main.py
+├── README.md
+└── README_TR.md
 ```
-## Sistem Gereksinimleri
-- **OS**: Ubuntu 24.04 (veya herhangi bir Linux/UNIX uyumlu sistem)
-- **Runtime**: Python 3.12+
-- **Dependencies**: Yok (Standart kütüphane yerleşik özelliklerini kullanır)
 
-## Bu Projeyi Sıfırdan Nasıl Oluşturursunuz
+## Gereksinimler
+- Python 3.7 veya üstü (`asyncio.run()` ve `asyncio.create_task()` 3.7'de eklendi). Python 3.12.3 ile test edilmiştir.
+- Üçüncü taraf paket gerekmez.
 
-### Adım 1: Dizin Kurulumu
-Çalışma alanı deponuz içinde özel bir proje dizin yapısı oluşturun:
-```bash
-mkdir 36_asyncio_basics
-cd 36_asyncio_basics
-```
-### Adım 2: Asenkron Döngü Mantığını Uygulama
-`main.py` adında bir dosya oluşturun. Non-blocking concurrency bileşenlerinizi adım adım oluşturun:
-
-1. **Async Sözdizimi ile Coroutine Tanımlama**: Takip fonksiyonlarınızı açık `async def` sözdizimi kullanılarak bildirin. Bu, fonksiyonu düz bir primitive değer yerine awaitable bir nesne döndüren bir coroutine olarak işaretler.
-2. **Non-Blocking Duraklamaları Kullanma**: Coroutine içinde, standart blocking hook'lar olan `time.sleep()` yerine `await asyncio.sleep()` kullanın. `await` anahtar kelimesi, ağ yanıtları veya zaman aşımları beklenirken yürütmeyi paylaşılan event loop örneğine geri vermesini açıkça komuta eder.
-3. **Concurrency İçin Görevleri Sarmalama**: Ana koordinatör rutini içinde, coroutine çağrılarını `asyncio.create_task()` içine sarın. Bu, yürütmeyi hemen alttaki event loop kuyruğuna kaydeder ve anında arka plan işleme zamanlar.
-4. **Gather ile Sonuçları Toplama**: Tüm kayıtlı görevler nihai çözüm durumlarına ulaşana kadar süpervizör bloğunu duraklatmak için `await asyncio.gather(task1, task2, ...)` kullanın ve tüm dönüş değerlerini yapılandırılmış bir sonuç listesine toplayın.
-
-### Adım 3: Çalıştırma ve Doğrulama
-Asenkron motoru doğrudan konsolunuzdan çalıştırın:
+## Çalıştırma
 ```bash
 python3 main.py
 ```
-Terminal çıktı dizisine dikkat edin. En kısa görev olan ("Cache-Node-Asia", 1s)'ın, en son planlanmasına rağmen, önce tamamladığını ve başarı mesajını yazdırdığını fark edin! Tüm betik, yaklaşık 3 saniyede (en uzun tek görevin süresi) bitiyor, bu da işlemlerin sırayla değil, eş zamanlı olarak yürütüldüğünü kanıtlıyor.
+
+## Örnek Çıktı (Python 3.12.3)
+```text
+--- Asyncio Non-Blocking Event Loop Active ---
+
+--> All network tasks scheduled onto the event loop thread. <--
+
+[Fetch API-Gateway-Europe] Initiating connection... (Will take 3s)
+[Fetch Database-Cluster-US] Initiating connection... (Will take 2s)
+[Fetch Cache-Node-Asia] Initiating connection... (Will take 1s)
+[Fetch Cache-Node-Asia] Data packet downloaded successfully.
+[Fetch Database-Cluster-US] Data packet downloaded successfully.
+[Fetch API-Gateway-Europe] Data packet downloaded successfully.
+
+All resolved packet responses: [{'server': 'API-Gateway-Europe', 'status': 200, 'payload': 'Success Data'}, {'server': 'Database-Cluster-US', 'status': 200, 'payload': 'Success Data'}, {'server': 'Cache-Node-Asia', 'status': 200, 'payload': 'Success Data'}]
+
+Total elapsed non-blocking pipeline duration: 3.0018 seconds.
+```
+Beş çalıştırmada toplam süre 3,0007 ile 3,0020 saniye arasında çıktı. Aynı üç bekleme art arda yapılsaydı 6 saniye sürerdi.
+
+## Kaynaklar
+- Blog yazısı: https://gurmezin.com/2026/09/14/pythonda-asyncio-beklerken-diger-isleri-yapan-kod-nasil-yazilir/
+- `asyncio` belgeleri: https://docs.python.org/3/library/asyncio.html

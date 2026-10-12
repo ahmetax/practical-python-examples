@@ -1,50 +1,62 @@
-# Proje 27: Metin Normalizasyonu ve Dilsel Temizleme
+# Proje 27: Metin Normalizasyonu ve Türkçe I Sorunu
 
-Temiz bir metin ön işleme hattı tasarlamayı ve oluşturmayı gösteren özel bir yardımcı program projesi. Bu çerçeve, Doğal Dil İşleme (NLP) alanındaki kritik dilsel tuzakları ele alır; örneğin, yerel ayara özgü büyük/küçük harf dönüşümleri (örneğin, Türkçe `I/ı` ve `i/İ` matrisi) ve düzenli ifade güdümlü temizleme (sanitization).
+Saf Python ile yazılmış küçük bir metin temizleme örneği. Metni Türkçe kurallarına göre küçük harfe çevirir, noktalama işaretlerini ve rakamları `re.sub()` ile siler, art arda gelen boşlukları tek boşluğa indirir.
 
-## Mimari Amaç
-Sistem, veri hattı (data pipeline) alım motorları, arama dizinleri veya NLP tokenizer'ları tipik bir metin normalizasyon katmanı görevi görür. Dağınık, kullanıcı tarafından gönderilmiş veya taranmış dizeleri kabul eder ve yerel ayar büyük/küçük harf kurallarını yöneterek, noktalama işaretlerini kaldırarak ve düzensiz boşlukları sıkıştırarak bunları standart formatlara dönüştürür.
+## Nasıl Çalışır?
+- **`turkish_lower(text)`**: Python'un `str.lower()` metodu Türkçe kurallarını değil, Unicode'un varsayılan kurallarını uygular. `I` harfini `i` yapar (Türkçede `ı` olmalı), `İ` harfini ise `i` artı birleşik nokta (U+0307) yapar; bu yüzden `"İSTANBUL".lower()` 8 değil 9 karakter uzunluğundadır. Fonksiyon önce `İ` harfini `i`, `I` harfini `ı` ile değiştirir, kalan harfler için `.lower()` çağırır.
+- **`turkish_upper(text)`**: Ters yön. `.upper()` çağırmadan önce `i` harfini `İ` ile değiştirir. (İçindeki `ı` → `I` değişimi zararsız ama gereksizdir: `"ı".upper()` zaten `I` döndürür.) Demo bu fonksiyonu çağırmaz.
+- **`normalize_text(raw_text, remove_digits=False)`**:
+  1. metni `turkish_lower()` ile küçük harfe çevirir,
+  2. kelime karakteri ya da boşluk olmayan her karakteri siler (`[^\w\s]`); `remove_digits=True` verilirse rakamları da (`\d`) siler,
+  3. art arda gelen boşluk, sekme ve satır sonlarını tek boşluğa indirir, baştaki ve sondaki boşlukları atar.
+
+Dikkat edilmesi gerekenler:
+- `\w` alt çizgiyi de kapsar; bu yüzden `Ahmet_Dev123` metni `ahmetdev` değil `ahmet_dev` olur.
+- `turkish_lower()` her girdiye Türkçe kurallarını uygular. Büyük `I` içeren İngilizce metin de değişir: `"ISSUE"` metni `"ıssue"` olur.
+- Python 3'te `str` desenleri için `re.UNICODE` zaten varsayılandır; koddaki bu bayrak hiçbir şeyi değiştirmez.
 
 ## Proje Yapısı
 ```text
 27_text_normalization/
-└── main.py
+├── main.py
+├── README.md
+└── README_TR.md
+```
 
-System Requirements
-OS: Ubuntu 24.04 (or any Linux/UNIX-based distribution)
+## Gereksinimler
+- Python 3. Kod yalnızca standart kütüphanedeki `re` modülünü ve f-string'leri kullanır; 3.12'ye özgü bir özellik yoktur. Python 3.12.3 (Ubuntu 24.04) ile test edildi.
+- Üçüncü taraf paket gerekmez.
 
-Runtime: Python 3.12+
-
-Dependencies: None (Leverages standard library re module)
-
-How to Recreate This Project From Scratch
-### Step 1: Directory Setup
-Create a dedicated folder for your project within your workspace repository:
-
+## Çalıştırma
 ```bash
-mkdir 27_text_normalization
-cd 27_text_normalization
+python3 main.py
+```
 
-### Adım 2: Temizleme Motorunu Uygulama
-`main.py` adında bir dosya oluşturun. Sisteminizi katman katman inşa edin:
+## Örnek Çıktı (Python 3.12.3)
+```text
+=== Testing Standard vs Custom Lowercasing ===
+Original       : İSTANBUL IŞIKLARI
+Naive .lower() : i̇stanbul işiklari  <- (Broken: notice the 'i' and 'ı' collision)
+Custom Lower   : istanbul ışıkları  <- (Correctly preserved linguistic shapes)
+------------------------------------------------------------
 
-Yerel Ayara Duyarlı Küçük Harfe Dönüştürme (Locale-Safe Lowercasing) Uygulayın: Özel bir fonksiyon uygulayın (örneğin, `turkish_lower(text)`). Standart string dönüşümlerini tetiklemeden önce, karakter anormalliklerini açıkça `.replace()` yoluyla yakalayın. Büyük noktalı İ'yi küçük noktalı i'ye ve büyük noktası olmayan I'yı küçük noktası olmayan ı'ya dönüştürün. Python'ın yerel `.lower()` fonksiyonunu çağırmadan önce karakter çakışmalarını çözmek için bu deseni izleyin.
+=== Running Comprehensive Pipeline ===
+Raw Input : İSTANBUL, ISPARTA ve İZMİR şehirleri incelendi.
+Normalized: istanbul ısparta ve izmir şehirleri incelendi
+------------------------------------------------------------
+Raw Input : Kullanıcı Adı: 'Ahmet_Dev123' - Giriş Tarihi: 2026!
+Normalized: kullanıcı adı ahmet_dev giriş tarihi
+------------------------------------------------------------
+Raw Input : ılık su ile İYİCE yıkanmış,   temiz bir   yüzey.
+Normalized: ılık su ile iyice yıkanmış temiz bir yüzey
+------------------------------------------------------------
+Raw Input : Mojo & Python dillerinin kararlılığı %100 test edildi.
+Normalized: mojo python dillerinin kararlılığı test edildi
+------------------------------------------------------------
+```
+`Naive .lower()` satırındaki ilk `i` harfinin üzerinde fazladan bir birleşik nokta (U+0307) vardır; terminal yazı tipinize göre düz bir `i` gibi görünebilir.
 
-Yerel Ayara Duyarlı Büyük Harfe Dönüştürme (Locale-Safe Uppercasing) Uygulayın: Eşleştirilmiş bir fonksiyon uygulayın (örneğin, `turkish_upper(text)`). Son yerel `.upper()` geri dönüşünü çalıştırmadan önce, küçük noktası olmayan ı'yı büyük noktası olmayan I'ya ve küçük noktalı i'yi büyük noktalı İ'ye eşleyin.
-
-İşleme Pipeline'ını Taslağını Çıkarma: Ana bir fonksiyon olan `normalize_text(raw_text, remove_digits)` oluşturun.
-
-Özel küçük harfe dönüştürme fonksiyonunuzu ilk olarak uygulayın.
-
-Noktalama işaretlerini düşürmek için düzenli ifadeleri (`re.sub()`) `re.UNICODE` bayrağı ile birleştirin. Noktalama işaretlerini düşürürken alfanümerik harfleri korumak için karakter kümeleri (örneğin, `[^\w\s]`) kullanarak esnek bir desen tasarlayın.
-
-İstenildiğinde rakamları (`\d`) temiz bir şekilde hedefleyip ortadan kaldırmak için bir bayrak ekleyin.
-
-Sondaki boşlukları kaldırın ve yapısal boşluk hatalarını (birden fazla boşluk, gizli tablar) tek bir boşluğa sıkıştırmak için `re.sub(r"\s+", " ", cleaned)` kullanın.
-
-### Adım 3: Çalıştırma ve Doğrulama
-`main.py` dosyasının en altına, karışık Türkçe karakterler, yoğun noktalama yapıları ve rakamlar içeren bir ham string örnekleri listesi kullanarak bir test çalıştırma dizisi ekleyin. Betiği yerel olarak çalıştırarak standart ve yerel ayara duyarlı normalleştirme arasındaki farkı gözlemleyin:
-```bash
-python main.py
-
-
+## Kaynaklar
+- Blog yazısı: https://gurmezin.com/2026/08/20/python-ile-metin-normalizasyonu-turkce-karakter-tuzaklarindan-kurtulun/
+- `re` belgeleri: https://docs.python.org/3/library/re.html
+- `str.lower()` belgeleri: https://docs.python.org/3/library/stdtypes.html#str.lower

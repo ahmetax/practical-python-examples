@@ -1,44 +1,70 @@
-# Proje 23: Yapısal Pattern Matching (match-case)
+# Proje 23: Yapısal Desen Eşleme (match-case)
 
-Python 3.10+ ile tanıtılan yapısal pattern matching (`match-case`) özelliğini nasıl uygulayacağını gösteren, temiz, üretim ortamına hazır bir örnektir. Bu pattern, karmaşık gelen payload'ları, veri tiplerini ve yapısal koşulları doğrularken iç içe geçmiş `if-elif-else` dallarına okunaklı, ifade gücü yüksek bir alternatif sağlar.
+`if`/`elif` zinciri yerine `match`/`case` kullanan küçük bir komut işleyici. `process_command()` fonksiyonu farklı biçimlerde girdiler alır (bir metin, listeler, `Order` veri sınıfı nesneleri, bir sözlük) ve girdinin yapısına ve türlerine göre bir dal seçer.
 
-## Mimari Hedef
-Uygulama, bir e-ticaret backend'i için bir komut işleme mimarisini modellemektedir. Çeşitli veri şekillerindeki (düz dizeler, yapılandırılmış diziler/listeler, tipli veri nesneleri ve sözlük eşlemeleri) gelen sistem payload'larını ayrıştırır ve girdi formatlarını dinamik olarak doğrulamak için yürütme guard'ları (execution guards) uygular.
+| # | Desen türü | Koddaki örnek |
+|---|------------|---------------|
+| 1 | Sabit değer deseni | `case "EXIT":` |
+| 2 | Tür kontrollü dizi deseni | `case ["add", str(item), int(qty)]:` |
+| 3 | Koşullu (guard) yıldız deseni | `case ["delete", *id_list] if len(id_list) > 0:` |
+| 4 | Sınıf deseni (anahtar kelimeli öznitelikler) | `case Order(product_name=name, quantity=qty, status="shipped"):` |
+| 5 | `as` ile bağlanan sınıf deseni | `case Order() as order:` |
+| 6 | Sözlük (mapping) deseni | `case {"type": "invoice", "amount": float(amt)}:` |
+| 7 | Joker (her şeyi yakalayan) | `case _:` |
 
-## Bu Projeyi Sıfırdan Nasıl Oluşturulur
+## Proje Yapısı
+```text
+23_structural_pattern_matching/
+├── main.py
+├── README.md
+└── README_TR.md
+```
 
-### Adım 1: Dizin Kurulumu
-Çalışma alanınızda projeniz için yeni bir klasör oluşturun:
+## Gereksinimler
+- Python 3.10 veya üstü (`match`/`case` 3.10'da eklendi, PEP 634). 3.12.3 ile test edildi; 3.10 ve 3.11'de de çalışır.
+- Üçüncü taraf paket gerekmez.
+
+## Çalıştırma
 ```bash
-mkdir 23_structural_pattern_matching
-cd 23_structural_pattern_matching
+python3 main.py
+```
 
-### Step 2: Establish the Core Implementation
-Create a single python file named main.py. Inside this script, structure your logic step-by-step using standard libraries:
+## Örnek Çıktı (Python 3.12.3)
+```text
+--- Python Match-Case Test Started ---
 
-Define Data Objects: Import dataclass from dataclasses. Implement an Order object with parameters representing product identity (product_name), amounts (quantity), and current tracking state (status).
+Input: ['add', 'Laptop', 2]
+Stock updated: Added 2 units of 'Laptop'.
+---------------------------------------------
+Input: ['delete', 404, 505]
+Deleting products with IDs: [404, 505]
+---------------------------------------------
+Input: Order(product_name='Wireless Headphones', quantity=1, status='shipped')
+In-Transit: Wireless Headphones (1 units) is currently with the carrier.
+---------------------------------------------
+Input: Order(product_name='Coffee Maker', quantity=1, status='pending')
+General Order Info: Coffee Maker - Status: pending
+---------------------------------------------
+Input: {'type': 'invoice', 'amount': 1250.5}
+Invoice processed. Amount: $1250.50
+---------------------------------------------
+Input: ['invalid_command_format']
+Invalid or unrecognized command format: ['invalid_command_format']
+---------------------------------------------
+Input: EXIT
+Exiting system...
+---------------------------------------------
+```
 
-Build the Dispatcher: Define a central routing function (e.g., process_command(command)) that accepts a generic input parameter.
+## Nasıl Çalışır?
+- `case` blokları yukarıdan aşağıya denenir; ilk eşleşen çalışır. Bu yüzden `Order(..., status="shipped")` deseni genel `Order()` deseninden önce gelir.
+- `str(item)` ve `int(qty)` hem türü kontrol eder hem de değeri değişkene bağlar. `["add", "Laptop", "2"]` (miktar metin olarak) eşleşmez ve `case _` dalına düşer.
+- Dizi deseni listelerle ve demetlerle (tuple) eşleşir, metinlerle asla eşleşmez. `("add", "Laptop", 2)` de `add` dalına girer.
+- `*id_list` kalan öğeleri toplar; `if len(id_list) > 0` koşulu tek başına `["delete"]` girdisini reddeder.
+- Sözlük deseni yalnızca yazılan anahtarlara bakar; fazladan anahtarlar yok sayılır. `float(amt)` yüzünden `{"type": "invoice", "amount": 1250}` gibi tam sayı bir tutar eşleşmez.
+- `process_command()` yalnızca `"EXIT"` için `False` döndürür ve döngü durur.
 
-Draft the Match Patterns:
-
-Literal Pattern: Check for simple command strings like "EXIT" to trigger system shutdowns.
-
-Sequence Pattern: Capture explicit operations passed as a list (e.g., ["add", item, qty]), extracting the index variables only if they conform to specific type assertions like str and int.
-
-Guard Expressions: Match slice elements (e.g., a deletion instruction ["delete", *ids]) and apply a hard filter condition using the if statement to ensure the identifier array is not empty.
-
-Object Pattern: Inspect your instance signatures. Isolate an object like Order matching specific interior flag attributes (status="shipped"). Use standard binding (as order) to fall back gracefully on general object routing.
-
-Mapping Pattern: Extract keyed payloads via dictionary matchers (e.g., checks looking for {"type": "invoice", "amount": float}).
-
-Wildcard: Conclude with a catch-all block (case _:) to report malformed, unhandled actions safely.
-
-### Step 3: Run and Verify
-Add a standard conditional driver script (if __name__ == "__main__":) to queue a heterogeneous array of input variants—including correct schemas, edge cases, object types, and completely invalid data shapes—and iterate through them. Execute the script natively:
-
-```bash
-python main.py
-
-
----
+## Kaynaklar
+- Blog yazısı: https://gurmezin.com/2026/08/02/pythonda-modern-veri-ayristirma-yapisal-pattern-matching-match-case/
+- `match` ifadesi belgeleri: https://docs.python.org/3/reference/compound_stmts.html#the-match-statement
+- PEP 636: Yapısal desen eşleme öğreticisi: https://peps.python.org/pep-0636/

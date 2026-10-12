@@ -1,36 +1,57 @@
-# Proje 32: İkili Arama Ağacı Veri Yapısı
+# Proje 32: İkili Arama Ağacı
 
-Baştan sona yerel olarak oluşturulmuş, bağımsız bir İkili Arama Ağacı (BST) nesne yönelimli uygulaması. Bu proje, referans/pointer düğüm bağlantısını, koşullu dolaşım mekaniklerini ve derin özyinelemeli ağaç manipülasyon stratejilerini gösterir.
+`Node` ve `BinarySearchTree` adlı iki sınıfla sıfırdan yazılmış bir ikili arama ağacı (BST). Bir düğümden küçük değerler soluna, büyük ya da eşit değerler sağına yerleşir. Ağaç üç işlemi destekler:
 
-## Mimari Amaç
-Uygulama, düz indeksleme tablolarına yapısal bir alternatif sağlar. Bir ebeveynin solundaki herhangi bir çocuk varlığının daha düşük bir değerlendirmeye, sağındaki herhangi bir çocuğun ise daha yüksek bir değere sahip olduğu hiyerarşik dal özelliklerini koruyarak, sistem arama işlemlerini ve düğüm güncellemelerini lineeritmik logaritmik zamanda ($O(\log n)$) çalıştırabilen yürütme çerçeveleri oluşturur.
+| Metot | Ne yapar? |
+|-------|-----------|
+| `insert(value)` | Kökten aşağı inerek değeri yeni bir yaprak olarak ekler |
+| `search(target)` | `True` ya da `False` döndürür; her düğümde yalnızca sol ya da sağ alt ağaçla devam eder |
+| `get_inorder_list()` | Sıralı dolaşım (sol, düğüm, sağ); değerleri sıralı olarak döndürür |
+
+Silme ya da güncelleme işlemi yoktur.
+
+## Nasıl Çalışır?
+- `Node` bir `value` ile başlangıçta `None` olan iki referans (`left` ve `right`) tutar.
+- `insert()`, `search()` ve dolaşım işi özyinelemeli yardımcı metotlarla yapılır (`_insert_recursive`, `_search_recursive`, `_inorder_recursive`).
+- Tekrarlanan değerlere izin verilir: eşit değer sağ alt ağaca gider, bu yüzden `5` değerini üç kez eklerseniz dolaşım `[5, 5, 5]` verir.
+- Arama ve ekleme ortalamada O(log n) adım sürer, ama yalnızca ağaç dengeli kaldığı sürece. Ağaç kendini dengelemez: zaten sıralı değerler eklerseniz her düğüm sağa gider, ağaç bağlı listeye dönüşür ve iki işlem de O(n) adım sürer. Metotlar özyinelemeli olduğu için 1.000 sıralı değer eklemek (`for i in range(1000): bst.insert(i)`) varsayılan özyineleme sınırında `RecursionError: maximum recursion depth exceeded` hatasıyla durur.
 
 ## Proje Yapısı
 ```text
 32_data_structures_bin_tree/
-└── main.py
+├── main.py
+├── README.md
+└── README_TR.md
+```
 
-System Requirements
-OS: Ubuntu 24.04 (or any Linux/UNIX-compatible ecosystem)
-Runtime: Python 3.12+ (Leverages modern union notation Node | None)
-Dependencies: None (Uses standard library built-ins)
+## Gereksinimler
+- Python 3.11 veya üstü. `Node | None` tip ipuçları 3.10 ister, ancak `main.py` ayrıca `from typing import Self` satırını içerir (3.11'de eklendi, kodda kullanılmıyor). Bu yüzden Python 3.10'da betik `ImportError: cannot import name 'Self' from 'typing'` hatasıyla durur. Python 3.12.3 ve 3.11 ile test edildi.
+- Üçüncü taraf paket gerekmez.
 
-How to Recreate This Project From Scratch
-### Step 1: Directory Setup
-Create a dedicated project directory structure within your repository workspace:
+## Çalıştırma
 ```bash
-mkdir 32_data_structures_bin_tree
-cd 32_data_structures_bin_tree
+python3 main.py
+```
 
-### Adım 2: Ağaç Sınıflarını Birleştirme
-`main.py` adında bir dosya oluşturun. Hiyerarşik varlıklarınızı adım adım yapılandırın:
-1. Bir Node Taslağı Tasarlama: `Node` adında temel bir yapı sınıfı oluşturun. Başlatıcısında (`__init__`), bir tamsayı `data` değişkeni kabul edin ve açıkça `None` olarak başlatılmış iki varsayılan çocuk işaretçi alanı (self.left ve self.right) eşleyin.
-2. Ana Ağaç Kabuğunu Tasarlama: `BinarySearchTree` adında, boş tek bir giriş işaretçisi ile başlatılan (self.root = None) bir koordinasyon sınıfı oluşturun.
-3. Özyinelemeli Ekleme Dahil Etme: Bir `insert(value)` genel metodu oluşturun. Eğer self.root mevcut değilse, yeni değeri hemen ona bağlayın. Aksi takdirde, düğümü dahili bir izleme metodu olan `_insert_recursive(current_node, value)`'a iletin. Yeni değeri mevcut düğüm değeriyle karşılaştırarak sola mı yoksa sağa mı dallanılacağına karar verin ve boş bir yaprak pozisyonu (`None`) bulunana kadar ağacı özyinelemeli olarak takip edin.
-4. Uzmanlaşmış Arama Yönlendirmesi Dahil Etme: Ağaç dallarında özyinelemeli olarak adım atan bir `search(target)` fonksiyonu uygulayın. Veri organize edildiği için her düğümü taramanıza gerek yoktur; aramalar, değer karşılaştırmalarına dayanarak tüm alt ağaçların ötesine atlayabilir ve bu sayede ortalama $O(\log n)$ zaman karmaşıklığı elde edebilirsiniz.
-5. Sıra İçi Sıralama Geçişi Uygulama: Bir sıra içi algoritma stratejisi kullanarak bir analitik görselleştirme dizisi oluşturun (`_inorder_recursive(node, list)`). Geçiş dizisi sırasını, önce sola adım atmak, ikinci olarak ebeveyn merkezi toplamak ve en son sağa geçiş yapmak üzere programlayın. Geçerli bir BST düzeni üzerinde gerçekleştirildiğinde, bu strateji doğal olarak değerleri mükemmel bir şekilde sıralanmış artan sırada çıktı verir.
+## Örnek Çıktı (Python 3.12.3)
+```text
+--- Custom Binary Search Tree Engine Started ---
 
-### Adım 3: Çalıştırma ve Doğrulama
-`main.py` dosyasının en altına bir sürücü değerlendirme betiği ekleyin. Sınıfınızın bir örneğini oluşturun, onu sıralanmamış bir sayı dizisiyle doldurun, bir sıra içi yazdırma araması çalıştırın ve izleme mantığınızı doğrulamak için hedeflenmiş değer sorgulamaları yapın. Betiği çalıştırın:
-```bash
-python main.py
+Inserting data sequentially: [50, 30, 70, 20, 40, 60, 80]
+Tree populated successfully.
+-------------------------------------------------------
+=== 1. Tree Traversal Assessment ===
+In-Order Traversal Output (Sorted): [20, 30, 40, 50, 60, 70, 80]
+-------------------------------------------------------
+
+=== 2. Targeted Binary Lookup Testing ===
+Searching for target element [40]: FOUND
+Searching for target element [99]: NOT FOUND
+Searching for target element [20]: FOUND
+-------------------------------------------------------
+```
+`[50, 30, 70, 20, 40, 60, 80]` ekleme sırası, derinliği 3 olan tam dengeli bir ağaç oluşturur.
+
+## Kaynaklar
+- Blog yazısı: https://gurmezin.com/2026/09/01/python-ile-ikili-arama-agaci-verileri-kendi-kendine-siralayan-bir-yapi-kurmak/
+- Python eğitimi, Sınıflar: https://docs.python.org/3/tutorial/classes.html

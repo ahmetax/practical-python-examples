@@ -1,51 +1,58 @@
-# Proje 26: Multiprocessing ve Threading Karşılaştırmalı Testi
+# Proje 26: Multiprocessing ve Threading Karşılaştırması
 
-Python'ın yüksek seviyeli yürütme modelleri arasındaki net hesaplama sınırlarını analiz eden pratik bir optimizasyon kıyaslaması: Multi-Threading (I/O-Bound odak) ve Multi-Processing (CPU-Bound odak).
+Betik aynı işi `concurrent.futures` modülündeki `ThreadPoolExecutor` (iş parçacıkları) ve `ProcessPoolExecutor` (süreçler) ile çalıştırır ve her birinin ne kadar sürdüğünü yazdırır.
 
-## Mimari Amaç
-Program, Python'ın Global Interpreter Lock (GIL)'ün `runtime` üzerindeki etkisini ortaya koyar. Hem kaynak tahsisi sistemlerinde yüksek yük, matematik ağırlıklı bir döngüyü (CPU-bound) paralel bir web-ağ bağlantı dizisiyle (I/O-bound) çalıştırarak, uygun ölçeklendirme modelini ne zaman seçeceğine dair somut referans noktaları belirler.
+| Aşama | İş | Neye bakmalı? |
+|-------|----|---------------|
+| 1. CPU yoğun | Python döngüsüyle 50.000.000'a kadar saymak, 4 kez | GIL yüzünden iş parçacıkları Python kodunu paralel çalıştıramaz; süreçler çalıştırabilir |
+| 2. G/Ç yoğun | `urllib.request` ile `https://www.example.com` adresini 4 kez açmak | Sürenin çoğu ağı beklemekle geçer |
 
 ## Proje Yapısı
 ```text
 26_multiprocessing_vs_threading/
-└── main.py
-System Requirements
-OS: Ubuntu 24.04 (Multi-core environment recommended)
+├── main.py
+├── README.md
+└── README_TR.md
+```
 
-Runtime: Python 3.12+
+## Gereksinimler
+- Python 3 (sürüme özgü bir özellik kullanılmaz). 3.12.3 ile test edildi.
+- Üçüncü taraf paket gerekmez.
+- 2. aşama için internet bağlantısı.
+- 1. aşamadaki etkiyi tam görmek için en az 4 çekirdekli bir işlemci.
 
-Dependencies: None (Uses standard library built-ins)
-
-## How to Recreate This Project From Scratch
-### Step 1: Directory Setup
-Create a fresh project subdirectory:
-
+## Çalıştırma
 ```bash
-mkdir 26_multiprocessing_vs_threading
-cd 26_multiprocessing_vs_threading
+python3 main.py
+```
+1. aşama bilerek yavaştır: iş parçacıklı çalıştırma, dört görevi art arda çalıştırmak kadar sürer. Betiğin tamamı onlarca saniye sürebilir.
 
-### Adım 2: Benchmark Çekirdeğini Oluşturma
-`main.py` dosyasını oluşturun ve hesaplamalı deneyleri uygulayın:
+## Örnek Çıktı (Python 3.12.3, 8 çekirdek)
+```text
+--- Threading vs Multiprocessing Benchmark Started ---
 
-Hesaplama Darboğazını Tasarlama: Ham işlemci işleme döngülerini tüketmek için ağır yineleme yapan (örneğin, standart döngüler kullanarak 50.000.000'a kadar saymak) CPU-bound bir fonksiyon tanımlayın.
+==================================================
+STAGE 1: CPU-Bound Task (Heavy Calculation)
+==================================================
+Threading (CPU-Bound) Duration       : 31.6311 seconds
+Multiprocessing (CPU-Bound) Duration : 7.8416 seconds
 
-G/Ç Darboğazını Tasarlama: Python'ın yerel `urllib.request.urlopen` modülünü kullanarak gerçek zamanlı web sitesi başlıkları çekmek gibi hafif harici etkileşimler gerçekleştiren bir I/O-bound fonksiyon tanımlayın.
+==================================================
+STAGE 2: I/O-Bound Task (Network Requests)
+==================================================
+Threading (I/O-Bound) Duration       : 0.2549 seconds
+Multiprocessing (I/O-Bound) Duration : 0.1605 seconds
+```
+Süreler işlemciye, sistem yüküne ve ağa bağlıdır. Yukarıdaki değerler makine başka işlerle meşgulken ölçüldü; boş bir makinede daha düşük değerler görürsünüz. Üç çalıştırmada CPU yoğun aşama süreçlerle her seferinde yaklaşık 4 kat hızlıydı (31,3 sn / 8,5 sn, 31,9 sn / 7,9 sn, 31,6 sn / 7,8 sn). Aynı makinede tek bir `cpu_bound_task(50_000_000)` çağrısı tek başına 8,6 sn sürdü; yani iş parçacıklı sürüm, dört çağrıyı sırayla çalıştırmaktan daha hızlı değildir.
 
-Yüksek Seviyeli Executor'ları Kullanma: Manuel kaynak örneklendirme yerine, `concurrent.futures` içeri aktarın. Bu soyut havuz yöneticisi, çok iş parçacıklı işçileri (`ThreadPoolExecutor`) ve izole alt süreçleri (`ProcessPoolExecutor`) aynı şekilde basitleştirir.
+## Nasıl Çalışır?
+- **CPU yoğun, iş parçacıkları:** GIL, aynı anda yalnızca bir iş parçacığının Python bayt kodu çalıştırmasına izin verir; dört iş parçacığı, tek görevin yaklaşık dört katı kadar sürer.
+- **CPU yoğun, süreçler:** Her işçi kendi yorumlayıcısı ve kendi GIL'i olan ayrı bir süreçtir; dört görev aynı anda dört çekirdekte çalışır.
+- **G/Ç yoğun:** Ağı bekleyen iş parçacığı GIL'i bırakır; bu yüzden iş parçacıkları bu tür işlere uygundur. Ancak bu betikte `example.com` istekleri o kadar kısadır ki (toplamı bir saniyenin çok altında) iki sürüm de saniyenin küçük bir kesrinde biter. Yukarıdaki çalıştırmalarda süreç sürümü biraz daha hızlı bile çıktı. Fark büyük ölçüde ölçüm gürültüsü ve ısınma etkisidir (ilk istek DNS çözümleme ve TLS kurulumu maliyetini öder); dört isteği sırayla göndermek de yaklaşık aynı sürdü (0,24 sn). Yani 2. aşama net bir kazanan göstermez.
+- `io_bound_task()` her türlü hatada (zaman aşımı, DNS hatası, internet yokluğu) `404` döndürür ve dönüş değerleri yazdırılmaz. İnternet bağlantısı olmasa bile betik 2. aşamanın sürelerini hiçbir uyarı vermeden yazar.
+- `max_workers` verilmediğinde `ThreadPoolExecutor` `min(32, CPU sayısı + 4)` iş parçacığı, `ProcessPoolExecutor` ise CPU başına bir süreç kullanır. Burada bunlardan yalnızca 4'üne iş düşer.
 
-Çapraz Sınavlarda Yürütmeyi Koordinasyon: Dört benzersiz senaryo boyunca görevlerinizi çalıştıran bir benchmark çerçevesi kurun:
-
-İş Parçacığı Yoluyla CPU Görevleri: GIL'in çekirdekleri sırayla rekabet etmeye zorlaması nedeniyle performans kısıtlamasına dikkat edin.
-
-Süreç Yoluyla CPU Görevleri: Ayrı sistem süreçlerinin farklı fiziksel CPU çekirdekleri üzerinde eş zamanlı çalıştığı için performans artışına dikkat edin.
-
-İş Parçacığı Yoluyla I/O Görevleri: İş parçacıklarının, minimum sistem yüküyle boş ağ bekleme süreleri sırasında yürütmeyi nasıl verimli bir şekilde bıraktığını izleyin.
-
-Süreç Yoluyla I/O Görevleri: Basit bekleme durumları için ayrı süreçler başlatmanın getirdiği operasyonel kaynak yüküne dikkat edin.
-
-### Adım 3: Benchmark'ları Çalıştırma
-Profilleme betiğini çalıştırın. Konsol çıktısı, hangi stratejinin her tür işlem darboğazına uyduğunu gösteren hassas yürütme süreleri sunar.
-```bash
-python main.py
-
-
+## Kaynaklar
+- Blog yazısı: https://gurmezin.com/2026/08/15/pythonda-hiz-yarisi-multiprocessing-mi-threading-mi/
+- `concurrent.futures` belgeleri: https://docs.python.org/3/library/concurrent.futures.html
+- Global Interpreter Lock (sözlük): https://docs.python.org/3/glossary.html#term-global-interpreter-lock

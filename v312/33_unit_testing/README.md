@@ -1,51 +1,58 @@
-# Project 33: Automated Unit Testing with Pytest
+# Project 33: Unit Testing with pytest
 
-A production-ready testing example demonstrating how to isolate business logic and implement automated test execution suites using `pytest`. This project covers basic assertions, checking edge cases, and verifying expected exception states.
+A small example of unit testing with `pytest`. The code under test and the tests live in separate files:
 
-## Architectural Goal
-The application establishes a formal test-driven layer within the code repository. By decoupling execution functions from the testing scripts, it allows continuous integration (CI) runners or pre-commit hooks to automatically parse execution states, ensuring that incoming changes do not introduce regressions into established business domains.
+| File | Contents |
+|------|----------|
+| `math_operations.py` | `divide_numbers()` raises `ValueError` when the denominator is zero; `calculate_average()` returns `0.0` for an empty list |
+| `test_math_operations.py` | Five tests: normal results, the error case and edge cases (empty list, single element) |
+
+## How It Works
+- pytest finds tests by name: files that start with `test_` and functions inside them that start with `test_`.
+- The tests use plain `assert` statements; pytest shows the compared values when an assertion fails.
+- `pytest.raises(ValueError)` checks that dividing by zero raises the expected exception. The test also compares the error message (`str(exc_info.value)`).
+- `math_operations.py` has no `if __name__ == "__main__":` block, so running it with `python3` prints nothing. The project is run through pytest.
 
 ## Project Structure
 ```text
 33_unit_testing/
 ├── math_operations.py
-└── test_math_operations.py
+├── test_math_operations.py
+├── README.md
+└── README_TR.md
+```
 
-System Requirements
-- OS: Ubuntu 24.04 (or any Linux/UNIX-compatible system)
-- Runtime: Python 3.12+
+## Requirements
+- Python 3.10 or newer (pytest 9 requires 3.10+; the code itself uses `list[float]`, which needs 3.9). Tested on 3.12.3.
+- Third-party package: `pytest`. Tested with pytest 9.1.1.
 
-Setup & Dependencies
-Pytest is an external framework package that needs to be installed inside your virtual environment. Run the following command:
-
+## Running
+Run the commands inside the `33_unit_testing` folder:
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install pytest
-
-How to Recreate This Project From Scratch
-Step 1: Directory Setup
-Create a dedicated folder for this project inside your repository workspace:
-
-```bash
-mkdir 33_unit_testing
-cd 33_unit_testing
-
-### Step 2: Implement Core Functions and Test Suits
-1. Create the Target Module: Create a file named math_operations.py. Inside, implement core utility tasks like a division function (divide_numbers) that explicitly guards boundaries by raising a ValueError during division-by-zero attempts, and an array calculation function (calculate_average) that safely manages empty inputs.
-
-2. Create the Testing Module: Create a file named test_math_operations.py. Note: Pytest depends on naming conventions to automatically discover tests; your file name must start with test_ and your interior test functions must also start with the test_ prefix.
-
-3. Draft Target Verifications: Implement clear test blocks using plain Python assert statements.
-
-  - Write standard path evaluations (e.g., verifying divide_numbers(10, 2) == 5.0).
-
-  - Use the with pytest.raises(ValueError): context manager block to verify that your system components actively intercept and raise expected exceptions on forbidden input parameters.
-
-### Step 3: Run and Verify
-Instead of running Python directly on the script, invoke the pytest engine from your terminal inside the project directory:
-
-```bash
 pytest -v
+```
+`-v` (verbose) lists every test with its result.
 
-The -v (verbose) flag commands the runner to list out every test scenario alongside its matching verification state, outputting a clean green pass summary profile.
+## Sample Output (Python 3.12.3)
+```text
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /path/to/.venv/bin/python3
+rootdir: /path/to/33_unit_testing
+collecting ... collected 5 items
 
+test_math_operations.py::test_divide_numbers_success PASSED              [ 20%]
+test_math_operations.py::test_divide_numbers_by_zero PASSED              [ 40%]
+test_math_operations.py::test_calculate_average_normal_list PASSED       [ 60%]
+test_math_operations.py::test_calculate_average_empty_list PASSED        [ 80%]
+test_math_operations.py::test_calculate_average_single_element PASSED    [100%]
 
+============================== 5 passed in 0.03s ===============================
+```
+Paths and the run time differ on your machine. pytest creates `.pytest_cache/` and `__pycache__/` folders in the project; you can delete them safely.
+
+## Resources
+- Blog post (Turkish): https://gurmezin.com/2026/09/05/pythonda-kodunuzu-kirilmaktan-koruyun-pytest-ile-birim-testi-yazmak/
+- pytest documentation: https://docs.pytest.org/

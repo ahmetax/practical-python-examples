@@ -1,44 +1,70 @@
 # Project 23: Structural Pattern Matching (match-case)
 
-A clean, production-ready example demonstrating how to implement structural pattern matching (`match-case`) introduced in Python 3.10+. This pattern provides a highly readable, expressive alternative to nested `if-elif-else` branches when validating complex incoming payloads, data types, and structural conditions.
+A small command processor that uses `match`/`case` instead of an `if`/`elif` chain. The `process_command()` function receives inputs of different shapes (a string, lists, `Order` dataclass objects, a dictionary) and picks a branch based on the structure and types of the input.
 
-## Architectural Goal
-The application models a command-processing architecture for an e-commerce backend. It parses incoming system payloads across various data shapes (plain strings, structured sequences/lists, typed data objects, and dictionary mappings) and applies execution guards to validate input formats dynamically.
+| # | Pattern type | Example in the code |
+|---|--------------|---------------------|
+| 1 | Literal pattern | `case "EXIT":` |
+| 2 | Sequence pattern with type checks | `case ["add", str(item), int(qty)]:` |
+| 3 | Star pattern with a guard | `case ["delete", *id_list] if len(id_list) > 0:` |
+| 4 | Class pattern (keyword attributes) | `case Order(product_name=name, quantity=qty, status="shipped"):` |
+| 5 | Class pattern with `as` binding | `case Order() as order:` |
+| 6 | Mapping pattern | `case {"type": "invoice", "amount": float(amt)}:` |
+| 7 | Wildcard | `case _:` |
 
-## How to Recreate This Project From Scratch
+## Project Structure
+```text
+23_structural_pattern_matching/
+├── main.py
+├── README.md
+└── README_TR.md
+```
 
-### Step 1: Directory Setup
-Create a fresh folder for the project within your workspace:
+## Requirements
+- Python 3.10 or newer (`match`/`case` was added in 3.10, PEP 634). Tested on 3.12.3; also runs on 3.10 and 3.11.
+- No third-party packages.
+
+## Running
 ```bash
-mkdir 23_structural_pattern_matching
-cd 23_structural_pattern_matching
+python3 main.py
+```
 
-### Step 2: Establish the Core Implementation
-Create a single python file named main.py. Inside this script, structure your logic step-by-step using standard libraries:
+## Sample Output (Python 3.12.3)
+```text
+--- Python Match-Case Test Started ---
 
-Define Data Objects: Import dataclass from dataclasses. Implement an Order object with parameters representing product identity (product_name), amounts (quantity), and current tracking state (status).
+Input: ['add', 'Laptop', 2]
+Stock updated: Added 2 units of 'Laptop'.
+---------------------------------------------
+Input: ['delete', 404, 505]
+Deleting products with IDs: [404, 505]
+---------------------------------------------
+Input: Order(product_name='Wireless Headphones', quantity=1, status='shipped')
+In-Transit: Wireless Headphones (1 units) is currently with the carrier.
+---------------------------------------------
+Input: Order(product_name='Coffee Maker', quantity=1, status='pending')
+General Order Info: Coffee Maker - Status: pending
+---------------------------------------------
+Input: {'type': 'invoice', 'amount': 1250.5}
+Invoice processed. Amount: $1250.50
+---------------------------------------------
+Input: ['invalid_command_format']
+Invalid or unrecognized command format: ['invalid_command_format']
+---------------------------------------------
+Input: EXIT
+Exiting system...
+---------------------------------------------
+```
 
-Build the Dispatcher: Define a central routing function (e.g., process_command(command)) that accepts a generic input parameter.
+## How It Works
+- The `case` blocks are tried from top to bottom; the first one that matches runs. That is why `Order(..., status="shipped")` comes before the general `Order()` case.
+- `str(item)` and `int(qty)` check the type and bind the value at the same time. `["add", "Laptop", "2"]` (quantity as a string) does not match and falls through to `case _`.
+- A sequence pattern matches lists and tuples, but never strings. `("add", "Laptop", 2)` matches the `add` case as well.
+- `*id_list` collects the remaining elements; the guard `if len(id_list) > 0` rejects a bare `["delete"]`.
+- The mapping pattern only checks the listed keys; extra keys are ignored. Because of `float(amt)`, an integer amount such as `{"type": "invoice", "amount": 1250}` does not match.
+- `process_command()` returns `False` only for `"EXIT"`, which stops the loop.
 
-Draft the Match Patterns:
-
-Literal Pattern: Check for simple command strings like "EXIT" to trigger system shutdowns.
-
-Sequence Pattern: Capture explicit operations passed as a list (e.g., ["add", item, qty]), extracting the index variables only if they conform to specific type assertions like str and int.
-
-Guard Expressions: Match slice elements (e.g., a deletion instruction ["delete", *ids]) and apply a hard filter condition using the if statement to ensure the identifier array is not empty.
-
-Object Pattern: Inspect your instance signatures. Isolate an object like Order matching specific interior flag attributes (status="shipped"). Use standard binding (as order) to fall back gracefully on general object routing.
-
-Mapping Pattern: Extract keyed payloads via dictionary matchers (e.g., checks looking for {"type": "invoice", "amount": float}).
-
-Wildcard: Conclude with a catch-all block (case _:) to report malformed, unhandled actions safely.
-
-### Step 3: Run and Verify
-Add a standard conditional driver script (if __name__ == "__main__":) to queue a heterogeneous array of input variants—including correct schemas, edge cases, object types, and completely invalid data shapes—and iterate through them. Execute the script natively:
-
-```bash
-python main.py
-
-
----
+## Resources
+- Blog post (Turkish): https://gurmezin.com/2026/08/02/pythonda-modern-veri-ayristirma-yapisal-pattern-matching-match-case/
+- The `match` statement: https://docs.python.org/3/reference/compound_stmts.html#the-match-statement
+- PEP 636: Structural Pattern Matching tutorial: https://peps.python.org/pep-0636/
