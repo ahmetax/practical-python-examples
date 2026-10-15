@@ -62,7 +62,7 @@ Error cases:
 [Error] Failed to connect. HTTP Status Code: 404
 [Critical Network Error] Connection timed out or failed: HTTPSConnectionPool(host='nonexistent.invalid', port=443): ...
 ```
-Note that the 404 message says "Failed to connect" even though the connection worked and the server answered.
+Note that the 404 message says "Failed to connect" even though the connection worked and the server answered. In both error cases the script still exits with code `0`, so a shell script or scheduled job will not notice the failure.
 
 ## Further Reading
 - Blog post (Turkish): https://gurmezin.com/2026/09/24/beautifulsoup-ile-web-scraping-html-corbasindan-anlamli-veri-cikarmak/

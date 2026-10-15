@@ -62,7 +62,7 @@ Hata durumları:
 [Error] Failed to connect. HTTP Status Code: 404
 [Critical Network Error] Connection timed out or failed: HTTPSConnectionPool(host='nonexistent.invalid', port=443): ...
 ```
-404 mesajının, bağlantı kurulduğu ve sunucu yanıt verdiği hâlde "Failed to connect" dediğine dikkat edin.
+404 mesajının, bağlantı kurulduğu ve sunucu yanıt verdiği hâlde "Failed to connect" dediğine dikkat edin. Her iki hata durumunda da betik `0` çıkış koduyla sonlanır, yani bir kabuk betiği ya da zamanlanmış görev hatayı fark etmez.
 
 ## Kaynaklar
 - Blog yazısı: https://gurmezin.com/2026/09/24/beautifulsoup-ile-web-scraping-html-corbasindan-anlamli-veri-cikarmak/
