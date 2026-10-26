@@ -79,4 +79,6 @@ python3 main.py
 
 ## Further Reading
 - Blog post (Turkish): https://gurmezin.com/2026/09/21/pythonda-regex-sinir-bekciligi-e-posta-telefon-ve-sifre-dogrulama/
+- Follow-up on these limitations (Turkish blog post): https://gurmezin.com/2026/11/02/regex-neyi-kabul-ediyor-turkce-harf-arapca-rakam-gorunmeyen-satir-sonu/
+- Fixed versions: 47_regex_edge_cases in this repository
 - `re` documentation: https://docs.python.org/3/library/re.html
