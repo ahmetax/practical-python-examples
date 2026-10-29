@@ -26,7 +26,7 @@ A small REST API built with FastAPI. It keeps an inventory of items in a Python 
 ```
 
 ## Requirements
-- Python 3.10 or newer (current FastAPI, Pydantic and Uvicorn releases require 3.10+; the code itself uses no newer syntax). Tested on 3.12.3.
+- Python 3.10 or newer is recommended: current FastAPI, Pydantic and Uvicorn releases require 3.10+. The code itself uses no newer syntax, so on older Pythons pip quietly installs older releases and the project still runs: Python 3.8 got fastapi 0.124.4, uvicorn 0.33.0, pydantic 2.10.6; Python 3.9 got fastapi 0.128.8, uvicorn 0.39.0, pydantic 2.13.5 (both tested in Docker on 29.10.2026, `GET /items` returned 200). Those older releases no longer receive fixes, and Python 3.8 and 3.9 are end-of-life. Tested on 3.12.3.
 - Third-party packages: `fastapi` and `uvicorn` (`pydantic` is installed together with FastAPI). Tested with fastapi 0.143.0, pydantic 2.14.1, uvicorn 0.54.0.
 
 ## Running

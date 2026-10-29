@@ -26,7 +26,7 @@ FastAPI ile yazılmış küçük bir REST API. Ürün envanterini bir Python sö
 ```
 
 ## Gereksinimler
-- Python 3.10 veya üstü (FastAPI, Pydantic ve Uvicorn'un güncel sürümleri 3.10+ istiyor; kodun kendisi daha yeni bir sözdizimi kullanmıyor). Python 3.12.3 ile test edildi.
+- Python 3.10 veya üstü önerilir: FastAPI, Pydantic ve Uvicorn'un güncel sürümleri 3.10+ istiyor. Kodun kendisi daha yeni bir sözdizimi kullanmadığı için eski Python'larda pip sessizce eski paket sürümlerini kuruyor ve proje yine çalışıyor: Python 3.8'de fastapi 0.124.4, uvicorn 0.33.0, pydantic 2.10.6; Python 3.9'da fastapi 0.128.8, uvicorn 0.39.0, pydantic 2.13.5 kuruldu (ikisi de 29.10.2026'da Docker'da denendi, `GET /items` 200 döndü). Bu eski paket sürümlerine artık düzeltme gelmiyor, Python 3.8 ve 3.9'un desteği de bitti. Python 3.12.3 ile test edildi.
 - Üçüncü taraf paketler: `fastapi` ve `uvicorn` (`pydantic`, FastAPI ile birlikte kurulur). fastapi 0.143.0, pydantic 2.14.1, uvicorn 0.54.0 ile test edildi.
 
 ## Çalıştırma
