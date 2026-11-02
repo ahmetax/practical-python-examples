@@ -7,7 +7,7 @@
 | `bubble_sort()` | Sırası bozuk komşu elemanların yerini tekrar tekrar değiştirir | O(n²), zaten sıralı listede O(n) |
 | `merge_sort()` | Listeyi özyinelemeli olarak ikiye böler, sıralı yarıları birleştirir | O(n log n) |
 
-İki fonksiyon da yeni bir liste döndürür ve girdi listesini değiştirmez.
+İki fonksiyon da girdi listesini değiştirmez. `bubble_sort()` her zaman yeni bir liste döndürür. `merge_sort()` da yeni liste döndürür, ama 0 ya da 1 elemanlı listeler hariç: bunlar olduğu gibi döndürüldüğü için sonuç, çağıranın kendi listesidir (`a = [42]` için `merge_sort(a) is a` sonucu `True`). `return list(arr)` yazılsaydı bu sorun olmazdı.
 
 ## Nasıl Çalışır?
 - **Bubble sort:** Bir kopya (`list(arr)`) üzerinde çalışır. Her geçişten sonra kalan en büyük eleman sona taşınmış olur, bu yüzden iç döngü her seferinde bir adım kısalır. Bir geçişte hiç yer değiştirme olmazsa liste zaten sıralıdır ve döngü erken biter.
@@ -52,4 +52,5 @@ Betik süre ölçmez. Bir test makinesinde 3.000 rastgele tamsayıyı sıralamak
 
 ## Kaynaklar
 - Blog yazısı: https://gurmezin.com/2026/08/28/python-ile-siralama-algoritmalari-bubble-sort-ve-merge-sort-karsilastirmasi/
+- Devam yazısı (kararlılık, kısa liste durumu ve bunları göremeyen testler): https://gurmezin.com/2026/11/16/testten-gecen-ama-yanlis-kararsiz-merge-sort-ikili-arama-agaci/
 - Python sıralama rehberi: https://docs.python.org/3/howto/sorting.html

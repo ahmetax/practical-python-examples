@@ -7,7 +7,7 @@ Two classic sorting algorithms written from scratch, without `sorted()` or `list
 | `bubble_sort()` | Repeatedly swaps neighbouring elements that are out of order | O(n²), O(n) on an already sorted list |
 | `merge_sort()` | Splits the list in half recursively, then merges the sorted halves | O(n log n) |
 
-Both functions return a new list and leave the input list unchanged.
+Both functions leave the input list unchanged. `bubble_sort()` always returns a new list. `merge_sort()` returns a new list too, except for lists with 0 or 1 elements: those are returned as is, so the result is the caller's own list (`merge_sort(a) is a` is `True` for `a = [42]`). `return list(arr)` would fix this.
 
 ## How It Works
 - **Bubble sort:** Works on a copy (`list(arr)`). After each pass the largest remaining element has moved to the end, so the inner loop gets one step shorter. If a pass makes no swap, the list is already sorted and the loop stops early.
@@ -52,4 +52,5 @@ The script does not measure time. On a test machine, sorting 3,000 random intege
 
 ## Resources
 - Blog post (Turkish): https://gurmezin.com/2026/08/28/python-ile-siralama-algoritmalari-bubble-sort-ve-merge-sort-karsilastirmasi/
+- Follow-up post (Turkish), stability, the short-list case and tests that miss both: https://gurmezin.com/2026/11/16/testten-gecen-ama-yanlis-kararsiz-merge-sort-ikili-arama-agaci/
 - Python Sorting Techniques: https://docs.python.org/3/howto/sorting.html

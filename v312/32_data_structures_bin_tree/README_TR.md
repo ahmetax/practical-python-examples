@@ -54,4 +54,5 @@ Searching for target element [20]: FOUND
 
 ## Kaynaklar
 - Blog yazısı: https://gurmezin.com/2026/09/01/python-ile-ikili-arama-agaci-verileri-kendi-kendine-siralayan-bir-yapi-kurmak/
+- Devam yazısı (sıralı girdi, RecursionError eşiği ve döngüyle yazılmış sürüm): https://gurmezin.com/2026/11/16/testten-gecen-ama-yanlis-kararsiz-merge-sort-ikili-arama-agaci/
 - Python eğitimi, Sınıflar: https://docs.python.org/3/tutorial/classes.html
