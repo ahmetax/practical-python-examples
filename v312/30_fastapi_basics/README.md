@@ -15,6 +15,8 @@ A small REST API built with FastAPI. It keeps an inventory of items in a Python 
 - `POST /items` rejects a duplicate `sku` with `400`. New items get the next integer ID (`max + 1`).
 - The data lives in the `INVENTORY_DB` dictionary, so everything you add is lost when the server restarts.
 - `limit` and `skip` are not validated. Negative values fall through to Python list slicing: `/items?limit=-1` returns every item except the last one.
+- Pydantic runs in lax mode: `"price": "12.5"` and `"price": true` are accepted (stored as 12.5 and 1.0), a name made of spaces passes `min_length=1`, and unknown fields are silently dropped.
+- `"price": "inf"` passes `gt=0`. The item is stored, the response fails with HTTP 500 (infinity is not valid JSON), and from then on `GET /items` also returns 500 until the server restarts. A bare `NaN` in the body gives 500 as well. Project 53 (`v312/53_lenient_api`) shows these cases and a corrected version.
 - FastAPI generates interactive documentation at `/docs` (Swagger UI) and `/redoc`.
 
 ## Project Structure
@@ -72,5 +74,6 @@ curl -X POST http://127.0.0.1:8000/items -H "Content-Type: application/json" \
 Sending the same `SKU-MON-03` item again returns `{"detail":"An item with SKU 'SKU-MON-03' already exists."}` with status `400`. Process IDs and paths differ on your machine.
 
 ## Resources
+- Follow-up post on input validation (Turkish): https://gurmezin.com/2026/11/26/sessizce-kabul-eden-api-fastapi-limit-fiyat-inf/
 - Blog post (Turkish): https://gurmezin.com/2026/08/26/fastapi-ile-tanisin-modern-hizli-ve-tip-guvenli-apiler-gelistirmek/
 - FastAPI documentation: https://fastapi.tiangolo.com/

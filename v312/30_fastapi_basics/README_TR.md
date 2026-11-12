@@ -15,6 +15,8 @@ FastAPI ile yazılmış küçük bir REST API. Ürün envanterini bir Python sö
 - `POST /items`, aynı `sku` ile gelen ikinci kaydı `400` ile reddeder. Yeni kayıtlar bir sonraki tamsayı kimliği alır (`max + 1`).
 - Veriler `INVENTORY_DB` sözlüğünde durur; sunucu yeniden başlayınca eklediğiniz her şey kaybolur.
 - `limit` ve `skip` doğrulanmaz. Negatif değerler doğrudan Python liste dilimlemesine gider: `/items?limit=-1` sonuncusu hariç bütün kayıtları döndürür.
+- Pydantic esnek kipte çalışır: `"price": "12.5"` ve `"price": true` kabul edilir (12.5 ve 1.0 olarak kaydedilir), yalnızca boşluktan oluşan bir ad `min_length=1` kuralını geçer, modelde olmayan alanlar sessizce atılır.
+- `"price": "inf"` değeri `gt=0` kuralını geçer. Kayıt eklenir, yanıt HTTP 500 ile çöker (sonsuz geçerli bir JSON sayısı değildir) ve bundan sonra `GET /items` da sunucu yeniden başlayana kadar 500 döndürür. Gövdede tırnaksız `NaN` da 500 verir. Bu durumlar ve düzeltilmiş sürüm proje 53'te (`v312/53_lenient_api`).
 - FastAPI, `/docs` (Swagger UI) ve `/redoc` adreslerinde etkileşimli belgeleri kendisi üretir.
 
 ## Proje Yapısı
@@ -72,5 +74,6 @@ curl -X POST http://127.0.0.1:8000/items -H "Content-Type: application/json" \
 Aynı `SKU-MON-03` kaydını tekrar gönderirseniz `400` durum koduyla `{"detail":"An item with SKU 'SKU-MON-03' already exists."}` yanıtını alırsınız. İşlem numaraları ve yollar sizin makinenizde farklı olur.
 
 ## Kaynaklar
+- Girdi doğrulama üzerine devam yazısı: https://gurmezin.com/2026/11/26/sessizce-kabul-eden-api-fastapi-limit-fiyat-inf/
 - Blog yazısı: https://gurmezin.com/2026/08/26/fastapi-ile-tanisin-modern-hizli-ve-tip-guvenli-apiler-gelistirmek/
 - FastAPI belgeleri: https://fastapi.tiangolo.com/
