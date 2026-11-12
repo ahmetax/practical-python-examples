@@ -57,8 +57,10 @@ Başarısız yanıt örneği, `APIResponse[User]` nesnesine `data=None` verir; o
 - `class APIResponse[T]:` tip parametresi `T`'yi doğrudan sınıf başlığında tanımlar. mypy, `APIResponse(status="success", data=user_data)` ifadesinden `APIResponse[User]` türünü çıkarır; böylece `response.data` değerinin `User` olduğunu bilir.
 - `process_user_response()` yalnızca `APIResponse[User]` kabul eder; ona `APIResponse[Product]` vermek mypy için tip hatasıdır, ama çalışma anında hata vermez.
 - Dosya hâlâ `typing` modülünden `Generic` ve `TypeVar` içe aktarır (11. satır) ama bunları kullanmaz; yeni sözdizimi burada onları gereksiz kılar.
+- mypy bu dosyada bir hata bildirir: `main.py:88: error: Argument "data" to "APIResponse" has incompatible type "None"; expected "User"  [arg-type]` (pyright aynı sorunu 86. satırdaki atamada gösterir). `data: T`, `None` kabul etmez; başarısız yanıt örneği yalnızca Python tip ipuçlarını çalışma anında denetlemediği için çalışır. `data: T | None` yazmak hatayı `response.data` satırına taşır, çünkü `is_successful()` tipi daraltmaz. Proje 54 (`v312/54_hints_and_patterns`) `Ok[T] | Err` biçiminde bir seçenek gösterir.
 
 ## Kaynaklar
+- Tip denetleyicileri üzerine devam yazısı: https://gurmezin.com/2026/11/30/tip-ipuclari-calismaz-desenler-yanilir-mypy-pyright/
 - Blog yazısı: https://gurmezin.com/2026/08/05/python-3-12-ile-tip-sisteminde-yeni-bir-donem-pep-695-ve-gelismis-jenerikler/
 - PEP 695: Tip parametresi sözdizimi: https://peps.python.org/pep-0695/
 - `typing` belgeleri: https://docs.python.org/3/library/typing.html

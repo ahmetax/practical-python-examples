@@ -57,8 +57,10 @@ The failed-response example passes `data=None` to an `APIResponse[User]`, but `d
 - `class APIResponse[T]:` declares the type parameter `T` directly in the class header. mypy infers `APIResponse[User]` from `APIResponse(status="success", data=user_data)`, so `response.data` is known to be a `User`.
 - `process_user_response()` accepts only `APIResponse[User]`; passing an `APIResponse[Product]` would be a type error for mypy, but not at run time.
 - The file still imports `Generic` and `TypeVar` from `typing` (line 11), but does not use them; the new syntax makes them unnecessary here.
+- mypy reports an error in this file: `main.py:88: error: Argument "data" to "APIResponse" has incompatible type "None"; expected "User"  [arg-type]` (pyright reports the same problem at the assignment on line 86). `data: T` does not allow `None`; the failed-response example only works because Python does not check type hints at runtime. Changing it to `data: T | None` moves the error to `response.data`, because `is_successful()` does not narrow the type. Project 54 (`v312/54_hints_and_patterns`) shows a `Ok[T] | Err` alternative.
 
 ## Resources
+- Follow-up post on type checkers (Turkish): https://gurmezin.com/2026/11/30/tip-ipuclari-calismaz-desenler-yanilir-mypy-pyright/
 - Blog post (Turkish): https://gurmezin.com/2026/08/05/python-3-12-ile-tip-sisteminde-yeni-bir-donem-pep-695-ve-gelismis-jenerikler/
 - PEP 695: Type Parameter Syntax: https://peps.python.org/pep-0695/
 - `typing` documentation: https://docs.python.org/3/library/typing.html

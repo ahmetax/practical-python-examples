@@ -62,9 +62,11 @@ Exiting system...
 - Dizi deseni listelerle ve demetlerle (tuple) eşleşir, metinlerle asla eşleşmez. `("add", "Laptop", 2)` de `add` dalına girer.
 - `*id_list` kalan öğeleri toplar; `if len(id_list) > 0` koşulu tek başına `["delete"]` girdisini reddeder.
 - Sözlük deseni yalnızca yazılan anahtarlara bakar; fazladan anahtarlar yok sayılır. `float(amt)` yüzünden `{"type": "invoice", "amount": 1250}` gibi tam sayı bir tutar eşleşmez.
+- `bool`, `int`'in alt sınıfı olduğu için `int(qty)` deseni `True` ve `False` ile de eşleşir: `["add", "Laptop", True]` "Added True units" yazar, `["delete", True, False]` da `[True, False]` kimliklerini siler. Negatif adetler de kabul edilir. Düzeltilmiş sürüm proje 54'te (`v312/54_hints_and_patterns`).
 - `process_command()` yalnızca `"EXIT"` için `False` döndürür ve döngü durur.
 
 ## Kaynaklar
+- Tip denetleyicileri ve match desenleri üzerine devam yazısı: https://gurmezin.com/2026/11/30/tip-ipuclari-calismaz-desenler-yanilir-mypy-pyright/
 - Blog yazısı: https://gurmezin.com/2026/08/02/pythonda-modern-veri-ayristirma-yapisal-pattern-matching-match-case/
 - `match` ifadesi belgeleri: https://docs.python.org/3/reference/compound_stmts.html#the-match-statement
 - PEP 636: Yapısal desen eşleme öğreticisi: https://peps.python.org/pep-0636/

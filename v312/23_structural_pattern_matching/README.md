@@ -62,9 +62,11 @@ Exiting system...
 - A sequence pattern matches lists and tuples, but never strings. `("add", "Laptop", 2)` matches the `add` case as well.
 - `*id_list` collects the remaining elements; the guard `if len(id_list) > 0` rejects a bare `["delete"]`.
 - The mapping pattern only checks the listed keys; extra keys are ignored. Because of `float(amt)`, an integer amount such as `{"type": "invoice", "amount": 1250}` does not match.
+- `int(qty)` also matches `True` and `False`, because `bool` is a subclass of `int`: `["add", "Laptop", True]` prints "Added True units", and `["delete", True, False]` deletes IDs `[True, False]`. Negative quantities are accepted too. Project 54 (`v312/54_hints_and_patterns`) shows a corrected version.
 - `process_command()` returns `False` only for `"EXIT"`, which stops the loop.
 
 ## Resources
+- Follow-up post on type checkers and match patterns (Turkish): https://gurmezin.com/2026/11/30/tip-ipuclari-calismaz-desenler-yanilir-mypy-pyright/
 - Blog post (Turkish): https://gurmezin.com/2026/08/02/pythonda-modern-veri-ayristirma-yapisal-pattern-matching-match-case/
 - The `match` statement: https://docs.python.org/3/reference/compound_stmts.html#the-match-statement
 - PEP 636: Structural Pattern Matching tutorial: https://peps.python.org/pep-0636/
