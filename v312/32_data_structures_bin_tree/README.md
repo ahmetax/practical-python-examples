@@ -55,4 +55,5 @@ The insertion order `[50, 30, 70, 20, 40, 60, 80]` produces a perfectly balanced
 ## Resources
 - Blog post (Turkish): https://gurmezin.com/2026/09/01/python-ile-ikili-arama-agaci-verileri-kendi-kendine-siralayan-bir-yapi-kurmak/
 - Follow-up post (Turkish), sorted input, the RecursionError threshold and an iterative version: https://gurmezin.com/2026/11/16/testten-gecen-ama-yanlis-kararsiz-merge-sort-ikili-arama-agaci/
+- Re-run with today's model (Turkish blog post), the same task given five times to Claude: https://gurmezin.com/2026/12/03/modeller-iyilesiyor-mu-agustos-projeleri-claude-yeniden-yazdirdik/
 - Python Tutorial, Classes: https://docs.python.org/3/tutorial/classes.html

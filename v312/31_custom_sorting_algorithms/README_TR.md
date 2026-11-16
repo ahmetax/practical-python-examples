@@ -53,4 +53,5 @@ Betik süre ölçmez. Bir test makinesinde 3.000 rastgele tamsayıyı sıralamak
 ## Kaynaklar
 - Blog yazısı: https://gurmezin.com/2026/08/28/python-ile-siralama-algoritmalari-bubble-sort-ve-merge-sort-karsilastirmasi/
 - Devam yazısı (kararlılık, kısa liste durumu ve bunları göremeyen testler): https://gurmezin.com/2026/11/16/testten-gecen-ama-yanlis-kararsiz-merge-sort-ikili-arama-agaci/
+- Aynı işin bugünkü modele beş kez yazdırılması (blog yazısı): https://gurmezin.com/2026/12/03/modeller-iyilesiyor-mu-agustos-projeleri-claude-yeniden-yazdirdik/
 - Python sıralama rehberi: https://docs.python.org/3/howto/sorting.html

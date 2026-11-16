@@ -53,4 +53,5 @@ The script does not measure time. On a test machine, sorting 3,000 random intege
 ## Resources
 - Blog post (Turkish): https://gurmezin.com/2026/08/28/python-ile-siralama-algoritmalari-bubble-sort-ve-merge-sort-karsilastirmasi/
 - Follow-up post (Turkish), stability, the short-list case and tests that miss both: https://gurmezin.com/2026/11/16/testten-gecen-ama-yanlis-kararsiz-merge-sort-ikili-arama-agaci/
+- Re-run with today's model (Turkish blog post), the same task given five times to Claude: https://gurmezin.com/2026/12/03/modeller-iyilesiyor-mu-agustos-projeleri-claude-yeniden-yazdirdik/
 - Python Sorting Techniques: https://docs.python.org/3/howto/sorting.html
